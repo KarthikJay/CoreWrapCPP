@@ -1,0 +1,12 @@
+# Build files
+build/
+
+# Log files
+*.log
+
+# Config files
+compile_commands.json
+.vscode
+
+# build files
+build/
