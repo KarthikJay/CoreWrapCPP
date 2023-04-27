@@ -1,10 +1,10 @@
 #include "CF/Boolean.hpp"
 
-#include <iostream>
 #include <type_traits>
 
 namespace CF
 {
+// MARK: - Internal Helper Functions -
     template <typename T>
         requires std::is_integral_v<T>
     static CFBooleanRef convertToCFBool(T value)
@@ -12,17 +12,18 @@ namespace CF
         return (value != 0) ? kCFBooleanTrue : kCFBooleanFalse;
     }
 
-    void swap(Boolean &v1, Boolean &v2) noexcept
-    {
-        std::swap(v1._cfObject, v2._cfObject);
-    }
-
+// MARK: - Constructors -
     Boolean::Boolean(bool value) noexcept
     {
         _cfObject = static_cast<CFBooleanRef>(CFRetain(convertToCFBool(value)));
     }
 
 // MARK: - Boolean Operators -
+    Boolean::operator bool()
+    {
+        return static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
+    }
+
     Boolean &Boolean::operator=(bool value) noexcept
     {
         if (_cfObject != nullptr)
@@ -36,6 +37,12 @@ namespace CF
         bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
         
         return (value == b);
+    }
+
+// MARK: - Standard Library Overrides -
+    void swap(Boolean &v1, Boolean &v2) noexcept
+    {
+        std::swap(v1._cfObject, v2._cfObject);
     }
 
 }

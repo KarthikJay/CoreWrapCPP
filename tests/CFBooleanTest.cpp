@@ -4,7 +4,6 @@
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_SUITE(boolean_constructor)
-
     BOOST_AUTO_TEST_CASE(default_constructor)
     {
         CF::Boolean test;
@@ -48,10 +47,20 @@ BOOST_AUTO_TEST_SUITE(boolean_constructor)
         BOOST_CHECK_EQUAL(test, true);
     }
 
+    BOOST_AUTO_TEST_CASE(double_false)
+    {
+        CF::Boolean test(0.0);
+        BOOST_CHECK_EQUAL(test, false);
+    }
+
+    BOOST_AUTO_TEST_CASE(double_true)
+    {
+        CF::Boolean test(1.0);
+        BOOST_CHECK_EQUAL(test, true);
+    }
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(boolean_assignment)
-
     BOOST_AUTO_TEST_CASE(reassign_false)
     {
         CF::Boolean test(true);
@@ -59,4 +68,25 @@ BOOST_AUTO_TEST_SUITE(boolean_assignment)
         BOOST_CHECK_EQUAL(test, false);
     }
 
+    BOOST_AUTO_TEST_CASE(reassign_true)
+    {
+        CF::Boolean test(false);
+        test = true;
+        BOOST_CHECK_EQUAL(test, true);
+    }
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(boolean_unary_logic)
+    BOOST_AUTO_TEST_CASE(unary_false)
+    {
+        CF::Boolean test;
+        bool unary_check = (test) ? true : false;
+        BOOST_CHECK_EQUAL(unary_check, false);
+    }
+    BOOST_AUTO_TEST_CASE(unary_true)
+    {
+        CF::Boolean test(true);
+        bool unary_check = (test) ? true : false;
+        BOOST_CHECK_EQUAL(unary_check, true);
+    }
 BOOST_AUTO_TEST_SUITE_END()

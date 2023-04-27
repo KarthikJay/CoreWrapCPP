@@ -42,22 +42,22 @@ set(COREWRAP_INCLUDE_DIRECTORIES		include/)
 
 
 # Platform Project Properties
-if (${CMAKE_HOST_SYSTEM_NAME} MATCHES "Darwin")
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Darwin")
 	string(APPEND SDK_PATH_COMMAND "xcrun --sdk ")
-	if (${CMAKE_SYSTEM_NAME} MATCHES "iOS")
+	if(${CMAKE_SYSTEM_NAME} MATCHES "iOS")
 		string(APPEND SDK_PATH_COMMAND "iphoneos")
 		set(CMAKE_OSX_ARCHITECTURES				"arm64e"	CACHE STRING
 			"Comma seperated list of platform targets to build.")
 		set(CMAKE_OSX_DEPLOYMENT_TARGET			"" 			CACHE STRING
 			"Must be empty for iOS builds." FORCE)
+		set(CMAKE_XCODE_ATTRIBUTE_SDKROOT	"iphoneos")
 	else()
 		string(APPEND SDK_PATH_COMMAND "macosx")
+		set(CMAKE_XCODE_ATTRIBUTE_SDKROOT	"macosx")
 	endif()
-	if (BUILD_INTERNAL_SDK)
+	if(BUILD_INTERNAL_SDK)
 		string(APPEND SDK_PATH_COMMAND ".internal")
-		set(CMAKE_XCODE_ATTRIBUTE_SDKROOT	"iphoneos.internal")
-	else()
-		set(CMAKE_XCODE_ATTRIBUTE_SDKROOT	"iphoneos")
+		string(APPEND CMAKE_XCODE_ATTRIBUTE_SDKROOT	".internal")
 	endif()
 	string(APPEND SDK_PATH_COMMAND " --show-sdk-path")
 	execute_process (
@@ -79,16 +79,18 @@ add_library(CoreWrap++)
 target_sources(CoreWrap++
 				PUBLIC
 					include/ExportVisibility.h
-					include/CF/Boolean.hpp
 					include/CF/TypeInterface.hpp
+					include/CF/Boolean.hpp
+					include/CF/Number.hpp
 				PRIVATE
+					src/CF/TypeInterface.cpp
 					src/CF/Boolean.cpp
-					src/CF/TypeInterface.cpp)
+					src/CF/Number.cpp)
 
 target_compile_options(CoreWrap++ PRIVATE "$<$<CONFIG:Release>:-Wall -Wextra -Wpedantic -O2 -fno-rtti>")
 target_compile_options(CoreWrap++ PRIVATE "$<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -O2 -g -fno-rtti>")
 # If tests are enabled, we want support for code coverage as well.
-if (BUILD_TESTS)
+if(BUILD_TESTS)
 	if (${CMAKE_BUILD_TYPE} NOT MATCHES "Deb")
 	message(WARNING "When building tests, please make sure to build with either \"Debug\" or \"RelWithDebInfo\"")
 	endif()
@@ -128,16 +130,16 @@ target_include_directories(CoreWrap++
 
 # Apple Frameworks
 find_library(CORE_FOUNDATION_LIB CoreFoundation REQUIRED)
-if (NOT CORE_FOUNDATION_LIB)
+if(NOT CORE_FOUNDATION_LIB)
 	message(FATAL_ERROR "Apple Core Foundation Framework not found via CMake")
 endif()
 
 # Enable Tests
-if (BUILD_TESTS)
+if(BUILD_TESTS)
 	add_subdirectory(tests)
 endif()
 
 # Enable Examples
-if (BUILD_EXAMPLES)
+if(BUILD_EXAMPLES)
 	add_subdirectory(examples/RetainLeaker)
 endif()
