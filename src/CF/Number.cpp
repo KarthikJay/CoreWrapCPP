@@ -38,16 +38,42 @@ namespace CF
         return number;
     }
 
-    template <typename T>
+// MARK: - Constructors -
+    Number::Number(int8_t value, CFAllocatorRef allocator) noexcept :
+    _allocator(allocator)
+    {
+        _cfObject = convertToCFNumber(value, _allocator);
+    }
+
+    Number::Number(int16_t value, CFAllocatorRef allocator) noexcept :
+    _allocator(allocator)
+    {
+        _cfObject = convertToCFNumber(value, _allocator);
+    }
+
+    Number::Number(int32_t value, CFAllocatorRef allocator) noexcept :
+    _allocator(allocator)
+    {
+        _cfObject = convertToCFNumber(value, _allocator);
+    }
+
+    Number::Number(int64_t value, CFAllocatorRef allocator) noexcept :
+    _allocator(allocator)
+    {
+        _cfObject = convertToCFNumber(value, _allocator);
+    }
+
+// MARK: - Operator Overloads -
+    template<typename T>
         requires std::is_integral_v<T> || std::is_floating_point_v<T>
-    static bool compareToCFNumber(const T value, const CFNumberRef object) noexcept
+    bool Number::operator==(const T value) const noexcept
     {
         bool isEqual;
-        CFNumberType numType = CFNumberGetType(object);
+        CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
         int64_t data = 0;
 
-        if (CFNumberIsFloatType(object) && std::is_integral_v<T> ||
-            !CFNumberIsFloatType(object) && std::is_floating_point_v<T>)
+        if (CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_integral_v<T> ||
+            !CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_floating_point_v<T>)
             return false;
 
         switch(numType)
@@ -63,8 +89,8 @@ namespace CF
             case kCFNumberLongLongType:
             case kCFNumberCFIndexType:
             case kCFNumberNSIntegerType:
-                // Don't need to check bool return value since this can be a "lossy" conversion from CoreFoundation POV.
-                CFNumberGetValue(object, numType, &data);
+                // Don't need to check bool return value since this can be a "lossy" conversion from CoreFoundation.
+                CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &data);
                 isEqual = (value == data);
                 break;
             case kCFNumberFloat32Type:
@@ -72,35 +98,24 @@ namespace CF
             case kCFNumberFloat64Type:
             case kCFNumberDoubleType:
             case kCFNumberCGFloatType:
-                // Don't need to check bool return value since this can be a "lossy" conversion from CoreFoundation POV.
-                CFNumberGetValue(object, numType, reinterpret_cast<double *>(&data));
+                // Don't need to check bool return value since this can be a "lossy" conversion from CoreFoundation.
+                CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, reinterpret_cast<double *>(&data));
                 isEqual = (static_cast<double>(value) == std::bit_cast<double>(data));
                 break;
         }
 
         return isEqual;
     }
-
-// MARK: - Constructors -
-    Number::Number(int8_t value, CFAllocatorRef allocator) noexcept :
-    _allocator(allocator)
-    {
-        _cfObject = convertToCFNumber(value, _allocator);
-    }
-
-// MARK: - Operator Overloads -
-    bool Number::operator==(const int8_t value) const noexcept
-    {
-        return compareToCFNumber(value, static_cast<CFNumberRef>(_cfObject));
-    }
-
-    bool Number::operator==(const float value) const noexcept
-    {
-        return compareToCFNumber(value, static_cast<CFNumberRef>(_cfObject));
-    }
-
-    bool Number::operator==(const double value) const noexcept
-    {
-        return compareToCFNumber(value, static_cast<CFNumberRef>(_cfObject));
-    }
+// MARK: - Template Overloads -
+    // Needed for linker to find symbols
+    template bool Number::operator==<uint8_t>(const uint8_t value) const noexcept;
+    template bool Number::operator==<int8_t>(const int8_t value) const noexcept;
+    template bool Number::operator==<uint16_t>(const uint16_t value) const noexcept;
+    template bool Number::operator==<int16_t>(const int16_t value) const noexcept;
+    template bool Number::operator==<uint32_t>(const uint32_t value) const noexcept;
+    template bool Number::operator==<int32_t>(const int32_t value) const noexcept;
+    template bool Number::operator==<uint64_t>(const uint64_t value) const noexcept;
+    template bool Number::operator==<int64_t>(const int64_t value) const noexcept;
+    template bool Number::operator==<float>(const float value) const noexcept;
+    template bool Number::operator==<double>(const double value) const noexcept;
 }
