@@ -16,7 +16,7 @@ namespace CF
 
         protected:
             CFTypeRef _cfObject;
-            ~Type() noexcept { CFRelease(_cfObject); }
+            virtual ~Type() noexcept { CFRelease(_cfObject); }
 
         private:
             virtual CFTypeID GetTypeID(void) const = 0;

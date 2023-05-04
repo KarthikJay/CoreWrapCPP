@@ -16,7 +16,9 @@ namespace CF
             Boolean &operator=(bool value) noexcept;
             bool operator==(bool value) const noexcept;
 
-            friend void swap(Boolean &v1, Boolean &v2) noexcept;
+            /* Manually override the garbage value gotten back from CFGetRetainCount().
+               If this object exists it technically has a retain count of 1.
+            */
             int64_t constexpr GetRetainCount(void) { return 1; };
 
         protected:

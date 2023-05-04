@@ -34,3 +34,18 @@ BOOST_AUTO_TEST_SUITE(number_constructor)
         BOOST_CHECK_NE(test, junk);
     }
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(number_conversion_operator)
+    BOOST_AUTO_TEST_CASE(u8_conversion)
+    {
+        CF::Number test = (uint8_t) 52;
+        uint8_t value = static_cast<uint8_t>(test);
+        BOOST_CHECK_EQUAL(value, 52);
+    }
+    BOOST_AUTO_TEST_CASE(float_conversion)
+    {
+        CF::Number test = (double) 3.14159265;
+        double value = static_cast<double>(test);
+        BOOST_CHECK_EQUAL(value, 3.14159265);
+    }
+BOOST_AUTO_TEST_SUITE_END()

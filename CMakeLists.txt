@@ -92,7 +92,7 @@ target_compile_options(CoreWrap++ PRIVATE "$<$<CONFIG:Debug>:-Wall -Wextra -Wped
 # If tests are enabled, we want support for code coverage as well.
 if(BUILD_TESTS)
 	if (${CMAKE_BUILD_TYPE} NOT MATCHES "Deb")
-	message(WARNING "When building tests, please make sure to build with either \"Debug\" or \"RelWithDebInfo\"")
+		message(WARNING "When building tests, please make sure to build with either \"Debug\" or \"RelWithDebInfo\"")
 	endif()
 	#target_compile_options(CoreWrap++ PRIVATE -fprofile-instr-generate -fcoverage-mapping)
 	#target_link_options(CoreWrap++ PUBLIC -coverage)
