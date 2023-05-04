@@ -39,10 +39,4 @@ namespace CF
         return (value == b);
     }
 
-// MARK: - Standard Library Overrides -
-    void swap(Boolean &v1, Boolean &v2) noexcept
-    {
-        std::swap(v1._cfObject, v2._cfObject);
-    }
-
 }

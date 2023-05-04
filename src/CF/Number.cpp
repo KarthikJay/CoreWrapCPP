@@ -54,7 +54,7 @@ namespace CF
     {
         bool isEqual;
         CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
-        int64_t data = 0;
+        uint64_t data = 0;
 
         if (CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_integral_v<T> ||
             !CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_floating_point_v<T>)
@@ -90,6 +90,40 @@ namespace CF
 
         return isEqual;
     }
+
+    template<typename T>
+        requires std::is_integral_v<T> || std::is_floating_point_v<T>
+    Number::operator T() const noexcept
+    {
+        T value;
+        bool wasLossy = false;
+        CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
+
+        switch(numType)
+        {
+            case kCFNumberSInt8Type:
+            case kCFNumberSInt16Type:
+            case kCFNumberSInt32Type:
+            case kCFNumberSInt64Type:
+            case kCFNumberCharType:
+            case kCFNumberShortType:
+            case kCFNumberIntType:
+            case kCFNumberLongType:
+            case kCFNumberLongLongType:
+            case kCFNumberCFIndexType:
+            case kCFNumberNSIntegerType:
+                wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
+            case kCFNumberFloat32Type:
+            case kCFNumberFloatType:
+            case kCFNumberFloat64Type:
+            case kCFNumberDoubleType:
+            case kCFNumberCGFloatType:
+                wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
+        }
+        // TODO(kjayakum): Log a library warning about lossy conversion here!
+        return value;
+    }
+
 // MARK: - Template Function Insantiations -
     // Needed for linker to find symbols
     template Number::Number(const uint8_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
@@ -111,4 +145,15 @@ namespace CF
     template bool Number::operator==(const int64_t value) const noexcept;
     template bool Number::operator==(const float value) const noexcept;
     template bool Number::operator==(const double value) const noexcept;
+
+    template Number::operator uint8_t() const noexcept;
+    template Number::operator int8_t() const noexcept;
+    template Number::operator uint16_t() const noexcept;
+    template Number::operator int16_t() const noexcept;
+    template Number::operator uint32_t() const noexcept;
+    template Number::operator int32_t() const noexcept;
+    template Number::operator uint64_t() const noexcept;
+    template Number::operator int64_t() const noexcept;
+    template Number::operator float() const noexcept;
+    template Number::operator double() const noexcept;
 }

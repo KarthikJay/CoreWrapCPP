@@ -19,13 +19,16 @@ namespace CF
                 requires std::is_integral_v<T> || std::is_floating_point_v<T>
             bool operator==(const T value) const noexcept;
 
+            template<typename T>
+                requires std::is_integral_v<T> || std::is_floating_point_v<T>
+            operator T() const noexcept;
+
+
             // Logical Boolean unary operator
             //explicit operator bool();
 
             //Number &operator=(uint32_t value) noexcept;
             //bool operator==(bool value) const noexcept;
-
-            //friend void swap(Boolean &v1, Boolean &v2) noexcept;
 
         protected:
             CFTypeID GetTypeID(void) const { return CFNumberGetTypeID(); }
