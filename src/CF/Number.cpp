@@ -7,60 +7,44 @@
 namespace CF
 {
 // MARK: - Internal Helper Functions -
+
+// MARK: - Constructors -
+    // Default to smallest 8-bit type
+    Number::Number() :
+    _allocator(kCFAllocatorDefault)
+    {
+        uint8_t zero = 0;
+        _cfObject = CFNumberCreate(_allocator, kCFNumberSInt8Type, &zero);
+    }
     template <typename T>
         requires std::is_integral_v<T> || std::is_floating_point_v<T>
-    static CFNumberRef convertToCFNumber(const T value, const CFAllocatorRef allocator) noexcept
+    Number::Number(const T value, CFAllocatorRef allocator) noexcept :
+    _allocator(allocator)
     {
         CFNumberRef number = nullptr;
         static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digit!");
         switch (std::numeric_limits<T>::digits)
         {
             case std::numeric_limits<int16_t>::digits:
-                number = CFNumberCreate(allocator, kCFNumberSInt16Type, &value);
+                number = CFNumberCreate(_allocator, kCFNumberSInt16Type, &value);
                 break;
             case std::numeric_limits<int32_t>::digits:
-                number = CFNumberCreate(allocator, kCFNumberSInt32Type, &value);
+                number = CFNumberCreate(_allocator, kCFNumberSInt32Type, &value);
                 break;
             case std::numeric_limits<int64_t>::digits:
-                number = CFNumberCreate(allocator, kCFNumberSInt64Type, &value);
+                number = CFNumberCreate(_allocator, kCFNumberSInt64Type, &value);
                 break;
             case std::numeric_limits<float>::digits:
-                number = CFNumberCreate(allocator, kCFNumberFloat32Type, &value);
+                number = CFNumberCreate(_allocator, kCFNumberFloat32Type, &value);
                 break;
             case std::numeric_limits<double>::digits:
-                number = CFNumberCreate(allocator, kCFNumberFloat64Type, &value);
+                number = CFNumberCreate(_allocator, kCFNumberFloat64Type, &value);
                 break;
             default: // Set to smallest size
-                number = CFNumberCreate(allocator, kCFNumberSInt8Type, &value);
+                number = CFNumberCreate(_allocator, kCFNumberSInt8Type, &value);
                 break;
         }
-
-        return number;
-    }
-
-// MARK: - Constructors -
-    Number::Number(int8_t value, CFAllocatorRef allocator) noexcept :
-    _allocator(allocator)
-    {
-        _cfObject = convertToCFNumber(value, _allocator);
-    }
-
-    Number::Number(int16_t value, CFAllocatorRef allocator) noexcept :
-    _allocator(allocator)
-    {
-        _cfObject = convertToCFNumber(value, _allocator);
-    }
-
-    Number::Number(int32_t value, CFAllocatorRef allocator) noexcept :
-    _allocator(allocator)
-    {
-        _cfObject = convertToCFNumber(value, _allocator);
-    }
-
-    Number::Number(int64_t value, CFAllocatorRef allocator) noexcept :
-    _allocator(allocator)
-    {
-        _cfObject = convertToCFNumber(value, _allocator);
+        _cfObject = number;
     }
 
 // MARK: - Operator Overloads -
@@ -106,16 +90,25 @@ namespace CF
 
         return isEqual;
     }
-// MARK: - Template Overloads -
+// MARK: - Template Function Insantiations -
     // Needed for linker to find symbols
-    template bool Number::operator==<uint8_t>(const uint8_t value) const noexcept;
-    template bool Number::operator==<int8_t>(const int8_t value) const noexcept;
-    template bool Number::operator==<uint16_t>(const uint16_t value) const noexcept;
-    template bool Number::operator==<int16_t>(const int16_t value) const noexcept;
-    template bool Number::operator==<uint32_t>(const uint32_t value) const noexcept;
-    template bool Number::operator==<int32_t>(const int32_t value) const noexcept;
-    template bool Number::operator==<uint64_t>(const uint64_t value) const noexcept;
-    template bool Number::operator==<int64_t>(const int64_t value) const noexcept;
-    template bool Number::operator==<float>(const float value) const noexcept;
-    template bool Number::operator==<double>(const double value) const noexcept;
+    template Number::Number(const uint8_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const int8_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const uint16_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const int16_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const uint32_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const int32_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const float value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const double value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+
+    template bool Number::operator==(const uint8_t value) const noexcept;
+    template bool Number::operator==(const int8_t value) const noexcept;
+    template bool Number::operator==(const uint16_t value) const noexcept;
+    template bool Number::operator==(const int16_t value) const noexcept;
+    template bool Number::operator==(const uint32_t value) const noexcept;
+    template bool Number::operator==(const int32_t value) const noexcept;
+    template bool Number::operator==(const uint64_t value) const noexcept;
+    template bool Number::operator==(const int64_t value) const noexcept;
+    template bool Number::operator==(const float value) const noexcept;
+    template bool Number::operator==(const double value) const noexcept;
 }
