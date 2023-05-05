@@ -22,7 +22,7 @@ namespace CF
     _allocator(allocator)
     {
         CFNumberRef number = nullptr;
-        static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digit!");
+        static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digits!");
         switch (std::numeric_limits<T>::digits)
         {
             case std::numeric_limits<int16_t>::digits:
@@ -54,39 +54,18 @@ namespace CF
     {
         bool isEqual;
         CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
-        uint64_t data = 0;
+        T data = 0;
 
         if (CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_integral_v<T> ||
             !CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_floating_point_v<T>)
             return false;
-
-        switch(numType)
-        {
-            case kCFNumberSInt8Type:
-            case kCFNumberSInt16Type:
-            case kCFNumberSInt32Type:
-            case kCFNumberSInt64Type:
-            case kCFNumberCharType:
-            case kCFNumberShortType:
-            case kCFNumberIntType:
-            case kCFNumberLongType:
-            case kCFNumberLongLongType:
-            case kCFNumberCFIndexType:
-            case kCFNumberNSIntegerType:
-                // Don't need to check bool return value since this can be a "lossy" conversion from CoreFoundation.
-                CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &data);
-                isEqual = (value == data);
-                break;
-            case kCFNumberFloat32Type:
-            case kCFNumberFloatType:
-            case kCFNumberFloat64Type:
-            case kCFNumberDoubleType:
-            case kCFNumberCGFloatType:
-                // Don't need to check bool return value since this can be a "lossy" conversion from CoreFoundation.
-                CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, reinterpret_cast<double *>(&data));
-                isEqual = (static_cast<double>(value) == std::bit_cast<double>(data));
-                break;
-        }
+        
+        /*
+        *   We don't check the bool return value of CFNumberGetValue since it only marks a "lossy" conversion.
+        *   The lossyness will be determined in the isEqual check as well.
+        */
+        CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &data);
+        isEqual = (value == data);
 
         return isEqual;
     }
@@ -96,31 +75,8 @@ namespace CF
     Number::operator T() const noexcept
     {
         T value;
-        bool wasLossy = false;
         CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
-
-        switch(numType)
-        {
-            case kCFNumberSInt8Type:
-            case kCFNumberSInt16Type:
-            case kCFNumberSInt32Type:
-            case kCFNumberSInt64Type:
-            case kCFNumberCharType:
-            case kCFNumberShortType:
-            case kCFNumberIntType:
-            case kCFNumberLongType:
-            case kCFNumberLongLongType:
-            case kCFNumberCFIndexType:
-            case kCFNumberNSIntegerType:
-                wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
-            case kCFNumberFloat32Type:
-            case kCFNumberFloatType:
-            case kCFNumberFloat64Type:
-            case kCFNumberDoubleType:
-            case kCFNumberCGFloatType:
-                wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
-        }
-        // TODO(kjayakum): Log a library warning about lossy conversion here!
+        bool wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
         return value;
     }
 
