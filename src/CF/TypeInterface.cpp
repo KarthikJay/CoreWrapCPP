@@ -8,7 +8,9 @@ namespace CF
         CFIndex utf16Length = CFStringGetLength(description);
         // Add extra space for terminating null character
         CFIndex length = CFStringGetMaximumSizeForEncoding(utf16Length, CFStringGetSystemEncoding()) + 1;
-        std::string convertedDescription(length, '\0');
+        // CoreFoundation returned an invalid length for object description!
+        assert(length >= 0);
+        std::string convertedDescription(static_cast<size_t>(length), '\0');
         if (CFStringGetCString(description, convertedDescription.data(), length, CFStringGetSystemEncoding()))
         {
             os << convertedDescription;
@@ -20,4 +22,4 @@ namespace CF
 
         return os;
     }
-};
+}

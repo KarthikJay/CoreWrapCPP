@@ -6,18 +6,24 @@
 # Need CMake 3.19 minimum for Apple silicon support.
 cmake_minimum_required (VERSION 3.19)
 
+# Extra Cmake debug helpers
+include(CMakePrintHelpers)
+
 # Compile commands:
-# 1. rm -rf build/ && cmake -B build/ -G Xcode -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+# 1. rm -rf build/ && cmake -B build/ -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Debug
 # 2. VERBOSE=1 cmake --build ./build --config Debug &| tee compile.log
 # 3. pushd ./build/tests/ && LLVM_PROFILE_FILE="cfbool.profraw" ./cfbool-tests && popd
 # 4. pushd ./build/tests/ && xcrun llvm-profdata merge -sparse ./cfbool.profraw -o cfbool.profdata && xcrun llvm-cov show ./cfbool-tests -instr-profile=./cfbool.profdata && xcrun llvm-cov report ./cfbool-tests -instr-profile=./cfbool.profdata && popd
 
+# Test command:
+# 1. ctest --test-dir ./build/tests/
+
 # Global Project Definition
 project(
 	CoreWrap++
-	VERSION 0.0.1
+	VERSION 0.0.2
 	DESCRIPTION "C++ wrappers for Apple's Objective-C Core* Libraries"
-	HOMEPAGE_URL "TBA"
+	HOMEPAGE_URL "https://github.com/KarthikJay/CoreWrapCPP"
 	LANGUAGES C CXX)
 
 # Project options
@@ -31,15 +37,19 @@ set(CMAKE_CXX_STANDARD					20)
 set(CMAKE_CXX_EXTENSIONS				OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED			ON)
 set(CMAKE_CXX_VISIBILITY_PRESET			hidden)
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE 				"Release" CACHE STRING
+      									"Choose the type of build, options are: \"Debug\" \"Release\" \"RelWithDebInfo\" \"MinSizeRel\"."
+      									FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_SUPPRESS_DEVELOPER_ERRORS		FALSE CACHE BOOL
 										"Marks AUTHOR_WARNING messages as errors and aborts.")
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS	TRUE CACHE BOOL
 										"Hides AUTHOR_WARNING messages, to enable prefer running with -Wdev on cmake command.")
-# Only exports compile_commands.json if generator is Unix makefiles or Ninja
+# Only exports compile_commands.json if generator is Unix makefiles or Ninja.
 set(CMAKE_EXPORT_COMPILE_COMMANDS		ON)
 # include PUBLIC directories
 set(COREWRAP_INCLUDE_DIRECTORIES		include/)
-
 
 # Platform Project Properties
 if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Darwin")
@@ -87,15 +97,25 @@ target_sources(CoreWrap++
 					src/CF/Boolean.cpp
 					src/CF/Number.cpp)
 
-target_compile_options(CoreWrap++ PRIVATE "$<$<CONFIG:Release>:-Wall -Wextra -Wpedantic -O2 -fno-rtti>")
-target_compile_options(CoreWrap++ PRIVATE "$<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -O2 -g -fno-rtti>")
+# Set compile options
+target_compile_options(CoreWrap++
+						PRIVATE
+							"-Wall" "-Wextra" "-Wpedantic" "-fno-rtti" "-Wextra-semi" "-Wunused"
+							"-Warray-bounds-pointer-arithmetic" "-Wconversion")
+if(${CMAKE_BUILD_TYPE} MATCHES "Deb")
+	target_compile_options(CoreWrap++ PRIVATE "")
+elseif(${CMAKE_BUILD_TYPE} MATCHES "Rel")
+	target_compile_options(CoreWrap++ PRIVATE "-Werror")
+endif()
 # If tests are enabled, we want support for code coverage as well.
 if(BUILD_TESTS)
-	if (${CMAKE_BUILD_TYPE} NOT MATCHES "Deb")
+	if (NOT ${CMAKE_BUILD_TYPE} MATCHES "Deb")
 		message(WARNING "When building tests, please make sure to build with either \"Debug\" or \"RelWithDebInfo\"")
 	endif()
-	#target_compile_options(CoreWrap++ PRIVATE -fprofile-instr-generate -fcoverage-mapping)
-	#target_link_options(CoreWrap++ PUBLIC -coverage)
+	target_compile_options(CoreWrap++ PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+	target_link_options(CoreWrap++ PUBLIC -coverage)
+	# Add time profiling
+	#target_compile_options(CoreWrap++ PRIVATE -finstrument-functions)
 	# Address Sanitizer for memory leak detection
 	#target_sources(CoreWrap++ PRIVATE src/CF/AddressSanitizerOptions.cpp)
 	#target_compile_options(CoreWrap++ PRIVATE -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls)
@@ -131,7 +151,7 @@ target_include_directories(CoreWrap++
 # Apple Frameworks
 find_library(CORE_FOUNDATION_LIB CoreFoundation REQUIRED)
 if(NOT CORE_FOUNDATION_LIB)
-	message(FATAL_ERROR "Apple Core Foundation Framework not found via CMake")
+	message(FATAL_ERROR "Apple Core Foundation Framework not found via CMake!")
 endif()
 
 # Enable Tests
