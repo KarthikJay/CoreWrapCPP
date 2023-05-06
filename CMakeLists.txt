@@ -1,7 +1,7 @@
 #[[
 	This CMake file follows the guidelines listed here:
 	https://hsf-training.github.io/hsf-training-cmake-webpage/aio/index.html
-]]
+#]]
 
 # Need CMake 3.19 minimum for Apple silicon support.
 cmake_minimum_required (VERSION 3.19)
@@ -114,8 +114,6 @@ if(BUILD_TESTS)
 	endif()
 	target_compile_options(CoreWrap++ PRIVATE -fprofile-instr-generate -fcoverage-mapping)
 	target_link_options(CoreWrap++ PUBLIC -coverage)
-	# Add time profiling
-	#target_compile_options(CoreWrap++ PRIVATE -finstrument-functions)
 	# Address Sanitizer for memory leak detection
 	#target_sources(CoreWrap++ PRIVATE src/CF/AddressSanitizerOptions.cpp)
 	#target_compile_options(CoreWrap++ PRIVATE -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls)

@@ -1,7 +1,7 @@
 #[[
 	This CMake file follows the guidelines listed here:
 	https://hsf-training.github.io/hsf-training-cmake-webpage/aio/index.html
-]]
+#]]
 
 # Need CMake 3.19 minimum for Apple silicon support.
 cmake_minimum_required (VERSION 3.19)
@@ -14,24 +14,27 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 include_directories(${Boost_INCLUDE_DIRS} ${COREWRAP_INCLUDE_DIRECTORIES})
 
 # Global Project Targets
-#set(CMAKE_CXX_FLAGS_DEBUG				"-Wall -Wextra -Wpedantic -g")
 set(CMAKE_CXX_STANDARD					20)
-set(CMAKE_CXX_EXTENSIONS				OFF)
+set(CMAKE_CXX_EXTENSIONS				ON)
 set(CMAKE_CXX_STANDARD_REQUIRED			ON)
 set(CMAKE_CXX_VISIBILITY_PRESET			hidden)
+set(LLVM_PROFILE_FILE					"ctest.profraw")
 link_libraries(${Boost_LIBRARIES} ${CORE_FOUNDATION_LIB} CoreWrap++)
+add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+# Doesn't currently work!
+# add_compile_options(-finstrument-functions)
+add_link_options(-coverage)
+
 add_executable(cfbool-tests)
 target_sources(cfbool-tests
 				PRIVATE
-					CFBooleanTest.cpp)
+					CFBooleanTest.cpp
+					ProfilerInstrumentation.cpp)
 add_executable(cfnumber-tests)
 target_sources(cfnumber-tests
 				PRIVATE
-					CFNumberTest.cpp)
-#target_link_libraries(cfbool-tests ${Boost_LIBRARIES} ${CORE_FOUNDATION_LIB} CoreWrap++)
-#target_link_options(cfbool-tests PRIVATE -coverage)
-#target_link_options(cfbool-tests PRIVATE -fprofile-instr-generate)
-#target_compile_options(cfbool-tests PRIVATE -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls)
-#target_link_options(cfbool-tests PRIVATE -fsanitize=address)
+					CFNumberTest.cpp
+					ProfilerInstrumentation.cpp)
+
 add_test(NAME "CF::Boolean Tests" COMMAND cfbool-tests)
 add_test(NAME "CF::Number Tests" COMMAND cfnumber-tests)
