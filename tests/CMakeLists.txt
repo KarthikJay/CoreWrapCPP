@@ -14,7 +14,7 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 include_directories(${Boost_INCLUDE_DIRS} ${COREWRAP_INCLUDE_DIRECTORIES})
 
 # Global Project Targets
-set(CMAKE_CXX_FLAGS						"-Wall -Wextra -Wpedantic -g")
+#set(CMAKE_CXX_FLAGS_DEBUG				"-Wall -Wextra -Wpedantic -g")
 set(CMAKE_CXX_STANDARD					20)
 set(CMAKE_CXX_EXTENSIONS				OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED			ON)

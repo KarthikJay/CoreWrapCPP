@@ -9,50 +9,41 @@ BOOST_AUTO_TEST_SUITE(boolean_constructor)
         CF::Boolean test;
         BOOST_CHECK_EQUAL(test, false);
     }
-
     BOOST_AUTO_TEST_CASE(bool_true)
     {
         CF::Boolean test(true);
         BOOST_CHECK_EQUAL(test, true);
     }
-
     BOOST_AUTO_TEST_CASE(bool_false)
     {
         CF::Boolean test(false);
         BOOST_CHECK_EQUAL(test, false);
     }
-
     BOOST_AUTO_TEST_CASE(int_false)
     {
         CF::Boolean test(0);
-        sleep(10);
         BOOST_CHECK_EQUAL(test, false);
     }
-
     BOOST_AUTO_TEST_CASE(int_true)
     {
         CF::Boolean test(1);
         BOOST_CHECK_EQUAL(test, true);
     }
-
     BOOST_AUTO_TEST_CASE(float_false)
     {
         CF::Boolean test(0.0);
         BOOST_CHECK_EQUAL(test, false);
     }
-
     BOOST_AUTO_TEST_CASE(float_true)
     {
         CF::Boolean test(1.0);
         BOOST_CHECK_EQUAL(test, true);
     }
-
     BOOST_AUTO_TEST_CASE(double_false)
     {
         CF::Boolean test(0.0);
         BOOST_CHECK_EQUAL(test, false);
     }
-
     BOOST_AUTO_TEST_CASE(double_true)
     {
         CF::Boolean test(1.0);
@@ -67,7 +58,6 @@ BOOST_AUTO_TEST_SUITE(boolean_assignment)
         test = false;
         BOOST_CHECK_EQUAL(test, false);
     }
-
     BOOST_AUTO_TEST_CASE(reassign_true)
     {
         CF::Boolean test(false);

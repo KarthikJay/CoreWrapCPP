@@ -40,7 +40,7 @@ namespace CF
             case std::numeric_limits<double>::digits:
                 number = CFNumberCreate(_allocator, kCFNumberFloat64Type, &value);
                 break;
-            default: // Set to smallest size
+            default: // Set to smallest 8-bit type
                 number = CFNumberCreate(_allocator, kCFNumberSInt8Type, &value);
                 break;
         }
@@ -56,8 +56,7 @@ namespace CF
         CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
         T data = 0;
 
-        if (CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_integral_v<T> ||
-            !CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) && std::is_floating_point_v<T>)
+        if (CFNumberIsFloatType(static_cast<CFNumberRef>(_cfObject)) != std::is_floating_point_v<T>)
             return false;
         
         /*
@@ -76,7 +75,8 @@ namespace CF
     {
         T value;
         CFNumberType numType = CFNumberGetType(static_cast<CFNumberRef>(_cfObject));
-        bool wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
+        [[maybe_unused]] bool wasLossy = CFNumberGetValue(static_cast<CFNumberRef>(_cfObject), numType, &value);
+        
         return value;
     }
 

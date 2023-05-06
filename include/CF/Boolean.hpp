@@ -19,7 +19,7 @@ namespace CF
             /* Manually override the garbage value gotten back from CFGetRetainCount().
                If this object exists it technically has a retain count of 1.
             */
-            int64_t constexpr GetRetainCount(void) { return 1; };
+            int64_t constexpr GetRetainCount(void) { return 1; }
 
         protected:
             CFTypeID GetTypeID(void) const { return CFBooleanGetTypeID(); }

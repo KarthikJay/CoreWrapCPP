@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE(number_constructors)
     }
     BOOST_AUTO_TEST_CASE(copy_double_max_constructor)
     {
-        float junk = 14.76273;
+        float junk = 14.76273f;
         CF::Number test = std::numeric_limits<double>::max();
         BOOST_CHECK_EQUAL(test, (double)std::numeric_limits<double>::max());
         BOOST_CHECK_NE(test, junk);
