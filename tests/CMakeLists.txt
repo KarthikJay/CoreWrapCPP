@@ -18,23 +18,28 @@ set(CMAKE_CXX_STANDARD					20)
 set(CMAKE_CXX_EXTENSIONS				ON)
 set(CMAKE_CXX_STANDARD_REQUIRED			ON)
 set(CMAKE_CXX_VISIBILITY_PRESET			hidden)
-set(LLVM_PROFILE_FILE					"ctest.profraw")
-link_libraries(${Boost_LIBRARIES} ${CORE_FOUNDATION_LIB} CoreWrap++)
+#set(LLVM_PROFILE_FILE					"ctest.profraw")
+link_libraries(${Boost_LIBRARIES} ${CORE_FOUNDATION_LIB} ${CMAKE_DL_LIBS} CoreWrap++)
 add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
-# Doesn't currently work!
-# add_compile_options(-finstrument-functions)
 add_link_options(-coverage)
 
 add_executable(cfbool-tests)
 target_sources(cfbool-tests
 				PRIVATE
-					CFBooleanTest.cpp
-					ProfilerInstrumentation.cpp)
+					CFBooleanTest.cpp)
 add_executable(cfnumber-tests)
 target_sources(cfnumber-tests
 				PRIVATE
-					CFNumberTest.cpp
+					CFNumberTest.cpp)
+
+#[[
+set_source_files_properties(CFBooleanTest.cpp PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -finstrument-functions -fpic")
+add_library(CustomProfiler)
+target_sources(CustomProfiler
+				PRIVATE
 					ProfilerInstrumentation.cpp)
+target_link_libraries(cfbool-tests PRIVATE CustomProfiler)
+#]]
 
 add_test(NAME "CF::Boolean Tests" COMMAND cfbool-tests)
 add_test(NAME "CF::Number Tests" COMMAND cfnumber-tests)

@@ -11,17 +11,19 @@ namespace CF
             Boolean(bool value = false) noexcept;
 
             // Logical Boolean unary operator
-            explicit operator bool();
+            operator bool();
 
             Boolean &operator=(bool value) noexcept;
-            bool operator==(bool value) const noexcept;
+            bool operator==(const bool value) const noexcept;
+            bool operator!=(const bool value) const noexcept;
 
-            /* Manually override the garbage value gotten back from CFGetRetainCount().
-               If this object exists it technically has a retain count of 1.
+            /*
+                Manually override the garbage value gotten back from CFGetRetainCount().
+                If this object exists it technically has a retain count of 1.
             */
-            int64_t constexpr GetRetainCount(void) { return 1; }
+            int64_t GetRetainCount(void) const noexcept = delete;
 
         protected:
-            CFTypeID GetTypeID(void) const { return CFBooleanGetTypeID(); }
+            CFTypeID GetTypeID(void) const override { return CFBooleanGetTypeID(); }
     };
 }

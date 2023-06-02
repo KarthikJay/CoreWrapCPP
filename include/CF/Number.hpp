@@ -2,30 +2,36 @@
 
 #include "TypeInterface.hpp"
 
+#include <type_traits>
+
 namespace CF
 {
     class CWPP_API Number : public CF::Type
     {
         public:
             // Constructors
-            Number();
+            Number(void) noexcept;
             template<typename T>
-                requires std::is_integral_v<T> || std::is_floating_point_v<T>
+                requires std::is_arithmetic_v<T>
             Number(const T value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
 
-
             // Operators
+            bool operator==(const CF::Number value) const noexcept;
             template<typename T>
-                requires std::is_integral_v<T> || std::is_floating_point_v<T>
+                requires std::is_arithmetic_v<T>
             bool operator==(const T value) const noexcept;
 
+            bool operator!=(const CF::Number value) const noexcept;
             template<typename T>
-                requires std::is_integral_v<T> || std::is_floating_point_v<T>
+                requires std::is_arithmetic_v<T>
+            bool operator!=(const T value) const noexcept;
+
+            template<typename T>
+                requires std::is_arithmetic_v<T>
             operator T() const noexcept;
 
-
             // Logical Boolean unary operator
-            //explicit operator bool();
+            // explicit operator bool();
 
             //Number &operator=(uint32_t value) noexcept;
             //bool operator==(bool value) const noexcept;
@@ -33,6 +39,5 @@ namespace CF
         protected:
             CFTypeID GetTypeID(void) const { return CFNumberGetTypeID(); }
         private:
-            const CFAllocatorRef _allocator;
     };
 }

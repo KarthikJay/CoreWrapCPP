@@ -80,3 +80,25 @@ BOOST_AUTO_TEST_SUITE(boolean_unary_logic)
         BOOST_CHECK_EQUAL(unary_check, true);
     }
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(boolean_equality_operators)
+    BOOST_AUTO_TEST_CASE(operator_equal_false)
+    {
+        CF::Boolean test1, test2(false);
+        bool check = (test1 == test2);
+        BOOST_CHECK_EQUAL(check, true);
+    }
+    BOOST_AUTO_TEST_CASE(operator_equal_true)
+    {
+        CF::Boolean test1, test2(true);
+        test1 = true;
+        bool check = (test1 == test2);
+        BOOST_CHECK_EQUAL(check, true);
+    }
+    BOOST_AUTO_TEST_CASE(operator_notequal)
+    {
+        CF::Boolean test1, test2(true);
+        bool check = (test1 == test2);
+        BOOST_CHECK_EQUAL(check, false);
+    }
+BOOST_AUTO_TEST_SUITE_END()

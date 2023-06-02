@@ -39,4 +39,11 @@ namespace CF
         return (value == b);
     }
 
+    bool Boolean::operator!=(bool value) const noexcept
+    {
+        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
+
+        return (value != b);
+    }
+
 }
