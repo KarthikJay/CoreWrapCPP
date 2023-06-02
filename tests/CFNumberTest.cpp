@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_SUITE(number_constructors)
         uint8_t value = test;
         BOOST_CHECK_EQUAL(test, std::numeric_limits<uint8_t>::max());
         BOOST_CHECK_EQUAL(static_cast<uint8_t>(test), temp);
-        BOOST_CHECK_EQUAL(test, value);
+        BOOST_CHECK_EQUAL(value, test);
         BOOST_CHECK_EQUAL(value, static_cast<uint8_t>(test));
     }
     BOOST_AUTO_TEST_CASE(float_max_constructor)

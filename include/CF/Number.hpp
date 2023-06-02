@@ -19,12 +19,18 @@ namespace CF
             bool operator==(const CF::Number value) const noexcept;
             template<typename T>
                 requires std::is_arithmetic_v<T>
-            bool operator==(const T value) const noexcept;
+            friend bool operator==(const T value, const CF::Number num) noexcept;
+            template<typename T>
+                requires std::is_arithmetic_v<T>
+            friend bool operator==(const CF::Number num, const T value) noexcept;
 
             bool operator!=(const CF::Number value) const noexcept;
             template<typename T>
                 requires std::is_arithmetic_v<T>
-            bool operator!=(const T value) const noexcept;
+            friend bool operator!=(const CF::Number num, const T value) noexcept;
+            template<typename T>
+                requires std::is_arithmetic_v<T>
+            friend bool operator!=(const T value, const CF::Number num) noexcept;
 
             template<typename T>
                 requires std::is_arithmetic_v<T>
