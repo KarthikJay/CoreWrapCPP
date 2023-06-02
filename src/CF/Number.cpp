@@ -118,9 +118,9 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
     template<typename T>
         requires std::is_arithmetic_v<T>
-    bool Number::operator==(const T value) const noexcept
+    bool operator==(const T value, const CF::Number num) noexcept
     {
-        T data = static_cast<T>(*this);
+        T data = static_cast<T>(num);
         bool isEqual = (value == data);
 
         return isEqual;
@@ -128,9 +128,26 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
     template<typename T>
         requires std::is_arithmetic_v<T>
-    bool Number::operator!=(const T value) const noexcept
+    bool operator==(const CF::Number num, const T value) noexcept
     {
-        return !(static_cast<T>(*this) == value);
+        T data = static_cast<T>(num);
+        bool isEqual = (data == value);
+
+        return isEqual;
+    }
+
+    template<typename T>
+        requires std::is_arithmetic_v<T>
+    bool operator!=(const CF::Number num, const T value) noexcept
+    {
+        return !(num == value);
+    }
+
+    template<typename T>
+        requires std::is_arithmetic_v<T>
+    bool operator!=(const T value, const CF::Number num) noexcept
+    {
+        return !(value == num);
     }
 
     template<typename T>
@@ -161,7 +178,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
     }
 
 // MARK: - Template Function Insantiations -
-    // Needed for linker to find symbols
+// Needed for linker to find symbols
+
     template Number::Number(const uint8_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
     template Number::Number(const int8_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
     template Number::Number(const uint16_t value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
@@ -171,27 +189,47 @@ overloaded(Ts...) -> overloaded<Ts...>;
     template Number::Number(const float value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
     template Number::Number(const double value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
 
-    template bool Number::operator==(const uint8_t value) const noexcept;
-    template bool Number::operator==(const int8_t value) const noexcept;
-    template bool Number::operator==(const uint16_t value) const noexcept;
-    template bool Number::operator==(const int16_t value) const noexcept;
-    template bool Number::operator==(const uint32_t value) const noexcept;
-    template bool Number::operator==(const int32_t value) const noexcept;
-    template bool Number::operator==(const uint64_t value) const noexcept;
-    template bool Number::operator==(const int64_t value) const noexcept;
-    template bool Number::operator==(const float value) const noexcept;
-    template bool Number::operator==(const double value) const noexcept;
+    template bool operator==(const uint8_t value, const CF::Number num) noexcept;
+    template bool operator==(const int8_t value, const CF::Number num) noexcept;
+    template bool operator==(const uint16_t value, const CF::Number num) noexcept;
+    template bool operator==(const int16_t value, const CF::Number num) noexcept;
+    template bool operator==(const uint32_t value, const CF::Number num) noexcept;
+    template bool operator==(const int32_t value, const CF::Number num) noexcept;
+    template bool operator==(const uint64_t value, const CF::Number num) noexcept;
+    template bool operator==(const int64_t value, const CF::Number num) noexcept;
+    template bool operator==(const float value, const CF::Number num) noexcept;
+    template bool operator==(const double value, const CF::Number num) noexcept;
+    template bool operator==(const CF::Number num, const uint8_t value) noexcept;
+    template bool operator==(const CF::Number num, const int8_t value) noexcept;
+    template bool operator==(const CF::Number num, const uint16_t value) noexcept;
+    template bool operator==(const CF::Number num, const int16_t value) noexcept;
+    template bool operator==(const CF::Number num, const uint32_t value) noexcept;
+    template bool operator==(const CF::Number num, const int32_t value) noexcept;
+    template bool operator==(const CF::Number num, const uint64_t value) noexcept;
+    template bool operator==(const CF::Number num, const int64_t value) noexcept;
+    template bool operator==(const CF::Number num, const float value) noexcept;
+    template bool operator==(const CF::Number num, const double value) noexcept;
 
-    template bool Number::operator!=(const uint8_t value) const noexcept;
-    template bool Number::operator!=(const int8_t value) const noexcept;
-    template bool Number::operator!=(const uint16_t value) const noexcept;
-    template bool Number::operator!=(const int16_t value) const noexcept;
-    template bool Number::operator!=(const uint32_t value) const noexcept;
-    template bool Number::operator!=(const int32_t value) const noexcept;
-    template bool Number::operator!=(const uint64_t value) const noexcept;
-    template bool Number::operator!=(const int64_t value) const noexcept;
-    template bool Number::operator!=(const float value) const noexcept;
-    template bool Number::operator!=(const double value) const noexcept;
+    template bool operator!=(const CF::Number num, const uint8_t value) noexcept;
+    template bool operator!=(const CF::Number num, const int8_t value) noexcept;
+    template bool operator!=(const CF::Number num, const uint16_t value) noexcept;
+    template bool operator!=(const CF::Number num, const int16_t value) noexcept;
+    template bool operator!=(const CF::Number num, const uint32_t value) noexcept;
+    template bool operator!=(const CF::Number num, const int32_t value) noexcept;
+    template bool operator!=(const CF::Number num, const uint64_t value) noexcept;
+    template bool operator!=(const CF::Number num, const int64_t value) noexcept;
+    template bool operator!=(const CF::Number num, const float value) noexcept;
+    template bool operator!=(const CF::Number num, const double value) noexcept;
+    template bool operator!=(const uint8_t value, const CF::Number num) noexcept;
+    template bool operator!=(const int8_t value, const CF::Number num) noexcept;
+    template bool operator!=(const uint16_t value, const CF::Number num) noexcept;
+    template bool operator!=(const int16_t value, const CF::Number num) noexcept;
+    template bool operator!=(const uint32_t value, const CF::Number num) noexcept;
+    template bool operator!=(const int32_t value, const CF::Number num) noexcept;
+    template bool operator!=(const uint64_t value, const CF::Number num) noexcept;
+    template bool operator!=(const int64_t value, const CF::Number num) noexcept;
+    template bool operator!=(const float value, const CF::Number num) noexcept;
+    template bool operator!=(const double value, const CF::Number num) noexcept;
 
     template Number::operator uint8_t() const noexcept;
     template Number::operator int8_t() const noexcept;
