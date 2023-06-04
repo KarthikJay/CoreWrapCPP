@@ -84,7 +84,8 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(boolean_equality_operators)
     BOOST_AUTO_TEST_CASE(operator_equal_false)
     {
-        CF::Boolean test1, test2(false);
+        CF::Boolean test1(true), test2(false);
+        test1 = false;
         bool check = (test1 == test2);
         BOOST_CHECK_EQUAL(check, true);
     }
@@ -100,5 +101,11 @@ BOOST_AUTO_TEST_SUITE(boolean_equality_operators)
         CF::Boolean test1, test2(true);
         bool check = (test1 == test2);
         BOOST_CHECK_EQUAL(check, false);
+    }
+    BOOST_AUTO_TEST_CASE(operator_equality_false_rhs)
+    {
+        CF::Boolean test;
+        bool check = (false == test);
+        BOOST_CHECK_EQUAL(check, true);
     }
 BOOST_AUTO_TEST_SUITE_END()
