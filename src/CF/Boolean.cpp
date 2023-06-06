@@ -19,29 +19,59 @@ namespace CF
     }
 
 // MARK: - Boolean Operators -
-    Boolean::operator bool()
+    Boolean::operator bool() const
     {
         return static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
     }
 
     Boolean &Boolean::operator=(bool value) noexcept
     {
-        if (_cfObject != nullptr)
-            CFRelease(_cfObject);
+        CFRelease(_cfObject);
         _cfObject = static_cast<CFBooleanRef>(CFRetain(convertToCFBool(value)));
         return *this;
     }
 
-    bool Boolean::operator==(bool value) const noexcept
+    Boolean &Boolean::operator=(CF::Boolean value) noexcept
     {
-        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
+        CFRelease(_cfObject);
+        bool underlying_value = static_cast<bool>(value);
+        _cfObject = static_cast<CFBooleanRef>(CFRetain(convertToCFBool(underlying_value)));
+
+        return *this;
+    }
+
+    bool Boolean::operator==(const Boolean& cfValue) const noexcept
+    {
+        bool current = CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject));
+        bool test = CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject));
+
+        return (current == test);
+    }
+
+    bool operator==(const Boolean& cfValue, bool value) noexcept
+    {
+        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject)));
+        
+        return (b == value);
+    }
+
+    bool operator==(bool value, const Boolean& cfValue) noexcept
+    {
+        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject)));
         
         return (value == b);
     }
 
-    bool Boolean::operator!=(bool value) const noexcept
+    bool operator!=(const Boolean& cfValue, bool value) noexcept
     {
-        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
+        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject)));
+
+        return (b != value);
+    }
+
+    bool operator!=(bool value, const Boolean& cfValue) noexcept
+    {
+        bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject)));
 
         return (value != b);
     }

@@ -34,10 +34,15 @@ namespace CF
 
             template<typename T>
                 requires std::is_arithmetic_v<T>
+            CF::Number operator=(const T value) noexcept;
+
+
+            template<typename T>
+                requires std::is_arithmetic_v<T>
             operator T() const noexcept;
 
             // Logical Boolean unary operator
-            // explicit operator bool();
+            explicit operator bool() const noexcept;
 
             //Number &operator=(uint32_t value) noexcept;
             //bool operator==(bool value) const noexcept;

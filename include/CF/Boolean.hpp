@@ -11,16 +11,17 @@ namespace CF
             Boolean(bool value = false) noexcept;
 
             // Logical Boolean unary operator
-            operator bool();
+            explicit operator bool() const;
 
             Boolean &operator=(bool value) noexcept;
-            bool operator==(const bool value) const noexcept;
-            bool operator!=(const bool value) const noexcept;
+            Boolean &operator=(Boolean value) noexcept;
+            bool operator==(const Boolean& cfValue) const noexcept;
+            friend bool operator==(const Boolean& cfValue, const bool value) noexcept;
+            friend bool operator==(const bool value, const Boolean& cfValue) noexcept;
+            friend bool operator!=(const Boolean& cfValue, const bool value) noexcept;
+            friend bool operator!=(const bool value, const Boolean& cfValue) noexcept;
 
-            /*
-                Manually override the garbage value gotten back from CFGetRetainCount().
-                If this object exists it technically has a retain count of 1.
-            */
+            // There is no valid retain count for CF booleans as they are defined constants.
             int64_t GetRetainCount(void) const noexcept = delete;
 
         protected:
