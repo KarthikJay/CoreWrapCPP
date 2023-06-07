@@ -11,7 +11,7 @@ namespace CF
             Boolean(bool value = false) noexcept;
 
             // Logical Boolean unary operator
-            explicit operator bool() const;
+            explicit operator bool() const noexcept;
 
             Boolean &operator=(bool value) noexcept;
             Boolean &operator=(Boolean value) noexcept;

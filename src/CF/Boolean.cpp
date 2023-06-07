@@ -19,7 +19,7 @@ namespace CF
     }
 
 // MARK: - Boolean Operators -
-    Boolean::operator bool() const
+    Boolean::operator bool() const noexcept
     {
         return static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(_cfObject)));
     }
