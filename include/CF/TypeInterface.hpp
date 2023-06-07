@@ -13,7 +13,8 @@ namespace CF
             //CFTypeRef GetCFObject(void) const noexcept { return static_cast<CFTypeRef>(this->_cfObject); }
             int64_t GetRetainCount(void) const noexcept { return CFGetRetainCount(_cfObject); }
 
-            friend std::ostream &operator<<(std::ostream &os, const CF::Type &obj) noexcept;
+            friend std::ostream &operator<<(std::ostream& os, const CF::Type& obj) noexcept;
+            friend bool operator==(const Type& lhs, const Type& rhs) noexcept;
 
         protected:
             CFTypeRef _cfObject;

@@ -2,7 +2,7 @@
 
 namespace CF
 {
-    std::ostream &operator<<(std::ostream &os, const CF::Type &obj) noexcept
+    std::ostream &operator<<(std::ostream &os, const Type &obj) noexcept
     {
         CFStringRef description = CFCopyDescription(obj._cfObject);
         CFIndex utf16Length = CFStringGetLength(description);
@@ -21,5 +21,10 @@ namespace CF
         }
 
         return os;
+    }
+
+    bool operator==(const Type& lhs, const Type& rhs) noexcept
+    {
+        return CFEqual(lhs._cfObject, rhs._cfObject);
     }
 }
