@@ -2,11 +2,12 @@
 
 namespace CF
 {
+    // TODO: This should probably throw if CF returns a failure to get the string...
     std::ostream &operator<<(std::ostream &os, const Type &obj) noexcept
     {
         CFStringRef description = CFCopyDescription(obj._cfObject);
         CFIndex utf16Length = CFStringGetLength(description);
-        // Add extra space for terminating null character
+        // Add extra space for terminating null character - needed since CF Strings are multimodal
         CFIndex length = CFStringGetMaximumSizeForEncoding(utf16Length, CFStringGetSystemEncoding()) + 1;
         // CoreFoundation returned an invalid length for object description!
         assert(length >= 0);
@@ -17,7 +18,7 @@ namespace CF
         }
         else
         {
-            os << "[Error]: Cannot copy CoreFoundation object!";
+            os << "[CoreFoundation Error]: Cannot copy CF object!";
         }
 
         return os;
@@ -26,5 +27,14 @@ namespace CF
     bool operator==(const Type& lhs, const Type& rhs) noexcept
     {
         return CFEqual(lhs._cfObject, rhs._cfObject);
+    }
+
+    void Type::operator=(const Type& copyType) noexcept
+    {
+        assert(_cfObject != nullptr);
+        CFRelease(_cfObject);
+        _cfObject = copyType._cfObject;
+        CFRetain(_cfObject);
+        return;
     }
 }
