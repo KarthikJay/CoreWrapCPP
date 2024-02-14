@@ -25,4 +25,4 @@
 #endif
 
 // \note Not needed with CMake setting visibility default to hidden
-// #define NIF_HIDDEN CWPP_SHARED_LOCAL
+// #define CWPP_HIDDEN CWPP_SHARED_LOCAL

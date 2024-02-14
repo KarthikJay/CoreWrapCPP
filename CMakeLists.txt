@@ -13,7 +13,8 @@ include(CMakePrintHelpers)
 # 1. rm -rf build/ && cmake -B build/ -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Debug
 # 2. VERBOSE=1 cmake --build ./build --config Debug &| tee compile.log
 # 3. pushd ./build/tests/ && LLVM_PROFILE_FILE="cfbool.profraw" ./cfbool-tests && popd
-# 4. pushd ./build/tests/ && xcrun llvm-profdata merge -sparse ./cfbool.profraw -o cfbool.profdata && xcrun llvm-cov show ./cfbool-tests -instr-profile=./cfbool.profdata && xcrun llvm-cov report ./cfbool-tests -instr-profile=./cfbool.profdata && popd
+# 4. pushd ./build/tests/ && xcrun llvm-profdata merge -sparse ./cfbool.profraw -o cfbool.profdata && xcrun llvm-cov show --Xdemangler=(xcrun --find llvm-cxxfilt) --Xdemangler="-n"./cfbool-tests -instr-profile=./cfbool.profdata && xcrun llvm-cov report -show-instantiation-summary=1 ./cfbool-tests -instr-profile=./cfbool.profdata && popd
+# 5. if you want to pass -show-functions=1 you also need to pass the source file location at the end of the command.
 
 # Test command:
 # 1. ctest --test-dir ./build/tests/
@@ -30,7 +31,7 @@ project(
 option(BUILD_SHARED_LIBS	"Build a shared library."	OFF)
 option(BUILD_TESTS			"Build tests."				OFF)
 option(BUILD_EXAMPLES		"Build examples."			OFF)
-option(BUILD_INTERNAL_SDK	"Use internal APPLE SDK's"  ON )
+option(BUILD_INTERNAL_SDK	"Use internal Apple SDK's"  ON )
 
 # Global Project Properties
 set(CMAKE_CXX_STANDARD					20)
@@ -154,6 +155,10 @@ endif()
 
 # Enable Tests
 if(BUILD_TESTS)
+	set(PARENT_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
+	# Disable extraneous ctest targets from being generated
+	set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED ON)
+	include(CTest)
 	add_subdirectory(tests)
 endif()
 
