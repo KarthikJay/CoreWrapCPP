@@ -325,7 +325,6 @@ namespace CF
         static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digits!");
         CFNumberType numType = ConvertToCFNumberType<T>();
         CFAllocatorRef allocator = this->GetCFAlloc();
-        CFRelease(_cfObject);
         _cfObject = CFNumberCreate(allocator, numType, &value);
         return *this;
     }
@@ -456,6 +455,17 @@ namespace CF
     template Number operator/(const int64_t value,   const Number num)   noexcept;
     template Number operator/(const float value,     const Number num)   noexcept;
     template Number operator/(const double value,    const Number num)   noexcept;
+
+    template Number Number::operator=(const uint8_t value)  noexcept;
+    template Number Number::operator=(const int8_t value)   noexcept;
+    template Number Number::operator=(const uint16_t value) noexcept;
+    template Number Number::operator=(const int16_t value)  noexcept;
+    template Number Number::operator=(const uint32_t value) noexcept;
+    template Number Number::operator=(const int32_t value)  noexcept;
+    template Number Number::operator=(const uint64_t value) noexcept;
+    template Number Number::operator=(const int64_t value)  noexcept;
+    template Number Number::operator=(const float value)    noexcept;
+    template Number Number::operator=(const double value)   noexcept;
 
     template Number::operator uint8_t()     const noexcept;
     template Number::operator int8_t()      const noexcept;
