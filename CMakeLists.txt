@@ -22,7 +22,7 @@ include(CMakePrintHelpers)
 # Global Project Definition
 project(
 	CoreWrap++
-	VERSION 0.0.3
+	VERSION 0.0.4
 	DESCRIPTION "C++ wrappers for Apple's Objective-C Core* Libraries"
 	HOMEPAGE_URL "https://github.com/KarthikJay/CoreWrapCPP"
 	LANGUAGES C CXX)
@@ -93,10 +93,12 @@ target_sources(CoreWrap++
 					include/CF/TypeInterface.hpp
 					include/CF/Boolean.hpp
 					include/CF/Number.hpp
+					include/CF/String.hpp
 				PRIVATE
 					src/CF/TypeInterface.cpp
 					src/CF/Boolean.cpp
-					src/CF/Number.cpp)
+					src/CF/Number.cpp
+					src/CF/String.cpp)
 
 # Set compile options
 target_compile_options(CoreWrap++

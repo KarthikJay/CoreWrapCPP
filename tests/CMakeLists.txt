@@ -83,6 +83,21 @@ add_custom_command( TARGET cfnumber-tests
 					MAIN_DEPENDENCY	cfnumber-tests
 					COMMENT	"Generating coverage data for CF::Number...")
 
+add_executable(cfstring-tests)
+ctest_boost_adapter(CFStringTest.cpp cfstring-tests)
+list(APPEND TEST_TARGETS cfstring-tests)
+target_sources(cfstring-tests
+				PRIVATE
+					CFStringTest.cpp)
+add_custom_command( TARGET cfstring-tests
+					POST_BUILD
+					COMMAND "LLVM_PROFILE_FILE=cfstring.profraw"
+							$<TARGET_FILE:cfstring-tests>
+							|| (exit 0) # This is needed in case tests fail, so underlying make system doesn't exit.
+					WORKING_DIRECTORY ${PARENT_BUILD_DIR}
+					MAIN_DEPENDENCY	cfstring-tests
+					COMMENT	"Generating coverage data for CF::String...")
+
 #[[
 set_source_files_properties(CFBooleanTest.cpp PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -finstrument-functions -fpic")
 add_library(CustomProfiler)
