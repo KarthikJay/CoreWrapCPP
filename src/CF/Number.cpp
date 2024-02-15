@@ -323,22 +323,13 @@ namespace CF
     Number Number::operator=(const T value) noexcept
     {
         static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digits!");
+        assert(_cfObject != nullptr);
         CFNumberType numType = ConvertToCFNumberType<T>();
         CFAllocatorRef allocator = this->GetCFAlloc();
+        CFRelease(_cfObject);
         _cfObject = CFNumberCreate(allocator, numType, &value);
         return *this;
     }
-
-/*
-    Number Number::operator=(const Number num) noexcept
-    {
-        assert(_cfObject != nullptr);
-        CFRelease(_cfObject);
-        _cfObject = num._cfObject;
-        CFRetain(_cfObject);
-        return *this;
-    }
-*/
 
 // MARK: - Template Function Insantiations -
 

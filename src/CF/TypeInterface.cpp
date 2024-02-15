@@ -32,6 +32,7 @@ namespace CF
     void Type::operator=(const Type& copyType) noexcept
     {
         assert(_cfObject != nullptr);
+        assert(this->GetTypeID() == copyType.GetTypeID());
         CFRelease(_cfObject);
         _cfObject = copyType._cfObject;
         CFRetain(_cfObject);
