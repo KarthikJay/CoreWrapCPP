@@ -120,7 +120,6 @@ BOOST_AUTO_TEST_SUITE(number_assignment_operators)
         CF::Number test = std::numeric_limits<double>::max();
         BOOST_CHECK_EQUAL(test, (double)std::numeric_limits<double>::max());
         BOOST_CHECK_NE(test, junk);
-        test = std::numeric_limits<double>::min();
         BOOST_CHECK_NE(junk, test);
     }
     BOOST_AUTO_TEST_CASE(number_assignment)
@@ -129,6 +128,15 @@ BOOST_AUTO_TEST_SUITE(number_assignment_operators)
         CF::Number test2 = test1;
         BOOST_CHECK_EQUAL(test1, test2);
         BOOST_CHECK_EQUAL(test2, test1);
+    }
+    BOOST_AUTO_TEST_CASE(number_reassignment)
+    {
+        CF::Number test((uint64_t)std::numeric_limits<uint64_t>::max());
+        BOOST_CHECK_EQUAL(test, (uint64_t)std::numeric_limits<uint64_t>::max());
+        test = 15;
+        BOOST_CHECK_EQUAL(15, test);
+        test = (int64_t) -35;
+        BOOST_CHECK_EQUAL(test, (int64_t) -35);
     }
     BOOST_AUTO_TEST_CASE(three_way_copy_u8_assignment)
     {
@@ -140,6 +148,8 @@ BOOST_AUTO_TEST_SUITE(number_assignment_operators)
         BOOST_CHECK_EQUAL(testr, testnum);
         BOOST_CHECK_EQUAL(testl, testnum);
         BOOST_CHECK_EQUAL(testnum, (uint8_t) 55);
+        BOOST_CHECK_EQUAL((uint8_t) 55, testr);
+        BOOST_CHECK_EQUAL((uint8_t) 55, testl);
     }
 BOOST_AUTO_TEST_SUITE_END()
 

@@ -78,7 +78,7 @@ namespace CF
             explicit operator const CFNumberRef(void) const noexcept { return static_cast<CFNumberRef>(_cfObject); }
 
         protected:
-            CFTypeID GetTypeID(void) const { return CFNumberGetTypeID(); }
+            CFTypeID GetTypeID(void) const override { return CFNumberGetTypeID(); }
         private:
     };
 }
