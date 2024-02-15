@@ -21,11 +21,6 @@ namespace CF
             friend std::strong_ordering operator<=>(const Boolean& cfValue, const bool value) noexcept;
             friend std::strong_ordering operator<=>(const bool value, const Boolean& cfValue) noexcept;
 
-            /*
-            friend bool operator!=(const Boolean& cfValue, const bool value) noexcept;
-            friend bool operator!=(const bool value, const Boolean& cfValue) noexcept;
-            */
-
             // There is no valid retain count for CF booleans as they are defined constants.
             int64_t GetRetainCount(void) const noexcept = delete;
 
