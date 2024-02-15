@@ -62,18 +62,18 @@ namespace CF
         return (value == b);
     }
 
-    bool operator!=(const Boolean& cfValue, bool value) noexcept
+    std::strong_ordering operator<=>(const Boolean& cfValue, const bool value) noexcept
     {
         bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject)));
 
-        return (b != value);
+        return b <=> value;
     }
 
-    bool operator!=(bool value, const Boolean& cfValue) noexcept
+    std::strong_ordering operator<=>(const bool value, const Boolean& cfValue) noexcept
     {
         bool b = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(cfValue._cfObject)));
 
-        return (value != b);
+        return value <=> b;
     }
 
 }
