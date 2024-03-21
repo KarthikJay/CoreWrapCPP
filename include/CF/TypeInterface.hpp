@@ -25,11 +25,11 @@ namespace CF
             // TODO: Implement rule of 5!
 
             // Constructors
-            Type(void) noexcept { _cfObject = nullptr; }
+            Type() noexcept { _cfObject = nullptr; }
             Type(const Type& object) noexcept { this->_cfObject = object._cfObject; CFRetain(_cfObject); }
 
             // Destructor
-            virtual ~Type() noexcept { CFRelease(_cfObject); }
+            virtual ~Type() noexcept { assert(_cfObject != nullptr); CFRelease(_cfObject); }
 
             // Methods
             CFAllocatorRef GetCFAlloc(void) const noexcept { return CFGetAllocator(_cfObject); }
@@ -39,9 +39,9 @@ namespace CF
             //          This has the side effect of not allowing types to be compound assignable (A = B = C), or complex comparison constructions
             //          ex: A = B = C will throw an error. This is acceptable as stylistically I don't agree with it.
             //          ex: for (Type a = lval;;;) will throw an error. This is acceptable since Type is an Abstract Base Class
-            void operator=(const Type& copyType) noexcept;
+            void operator=(const CFTypeRef copyType) noexcept;
 
         private:
-            virtual CFTypeID GetTypeID(void) const = 0;
+            virtual CFTypeID GetTypeID() const = 0;
     };
 }

@@ -33,15 +33,19 @@ namespace CF
             template <typename T>
                 requires std::is_arithmetic_v<T>
             friend String operator+(const T value, String& cfString) noexcept;
-            friend String operator+(String& cfString, const std::string& addendum);
+            friend String operator+(const String& cfString, const std::string& addendum);
+            friend String operator+(const std::string& aString, const String& cfString);
+            friend String operator+(const String& string1, const String& string2);
 
             String operator=(const std::string& aString) noexcept;
+            char operator[](const size_t idx) const noexcept;
 
-            std::string data(void) const;
+            std::string data() const;
+            char at(const size_t idx) const;
 
-            explicit operator const CFStringRef(void) const noexcept { return static_cast<CFStringRef>(_cfObject); }
+            explicit operator const CFStringRef() const noexcept { return static_cast<CFStringRef>(_cfObject); }
         protected:
-            CFTypeID GetTypeID(void) const override { return CFStringGetTypeID(); }
+            CFTypeID GetTypeID() const override { return CFStringGetTypeID(); }
         private:
             CFStringEncoding _encoding;
     };

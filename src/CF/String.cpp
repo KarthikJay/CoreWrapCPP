@@ -10,6 +10,44 @@ namespace CF
 // MARK: - Internal Helper Defines
 
 // MARK: - Internal Helper Functions -
+const std::string_view GetEncodingName(CFStringEncoding encoding)
+{
+    const char* name = nullptr;
+    
+    switch(encoding)
+    {
+        case kCFStringEncodingUTF8:
+            name = "Unicode (UTF-8)";
+            break;
+        case kCFStringEncodingUTF16:
+            name = "Unicode (UTF-16)";
+            break;
+        case kCFStringEncodingUTF16BE:
+            name = "Unicode (UTF-16BE)";
+            break;
+        case kCFStringEncodingUTF16LE:
+            name = "Unicode (UTF-16LE)";
+            break;
+        case kCFStringEncodingUTF32:
+            name = "Unicode (UTF-32)";
+            break;
+        case kCFStringEncodingUTF32BE:
+            name = "Unicode (UTF-32BE)";
+            break;
+        case kCFStringEncodingUTF32LE:
+            name = "Unicode (UTF-32LE)";
+            break;
+        case kCFStringEncodingNonLossyASCII:
+        case kCFStringEncodingASCII:
+            name = "ASCII";
+            break;
+        case kCFStringEncodingUTF7:
+            name = "Unicode (UTF-7)";
+            break;
+    }
+
+    return name;
+}
 
 // MARK: - Constructors -
 /*
@@ -101,11 +139,36 @@ namespace CF
     {
         CFAllocatorRef alloc = this->GetCFAlloc();
         CFStringEncoding current_encoding = this->_encoding;
-        _cfObject = CFStringCreateWithCString(alloc, aString.data(), current_encoding);
+        Type::operator=(CFStringCreateWithCString(alloc, aString.data(), current_encoding));
+
         return *this;
     }
 
-    std::string String::data(void) const
+    char String::operator[](const size_t idx) const noexcept
+    {
+        UniChar temp = CFStringGetCharacterAtIndex(static_cast<CFStringRef>(_cfObject), static_cast<long>(idx));
+
+        return static_cast<char>(temp);
+    }
+
+    char String::at(const size_t idx) const
+    {
+        std::ostringstream errorMessage;
+        CFStringEncoding stringEncoding = CFStringGetSmallestEncoding(static_cast<CFStringRef>(_cfObject));
+        size_t stringLength = static_cast<size_t>(CFStringGetMaximumSizeForEncoding(CFStringGetLength(static_cast<CFStringRef>(_cfObject)), stringEncoding));
+        if (GetEncodingName(stringEncoding) != "ASCII")
+        {
+            errorMessage << "[CoreFoundation Error]: String is encoded in " << GetEncodingName(stringEncoding) << " which is not trivially convertible to char!";
+            throw std::runtime_error(errorMessage.str());
+        }
+        if (idx >= stringLength)
+        {
+            throw std::out_of_range("Index is greater than CF string length!");
+        }
+        return (*this)[idx];
+    }
+
+    std::string String::data() const
     {
         std::ostringstream errorMessage;
         CFIndex utf16Length = CFStringGetLength(static_cast<CFStringRef>(_cfObject));
@@ -125,12 +188,24 @@ namespace CF
         return cfData;
     }
 
-    /*
-    String operator+(String& cfString, const std::string_view cString)
+    String operator+(const String& cfString, const std::string& addendum)
     {
+        String newString = cfString.data() + addendum;
 
+        return newString;
     }
-    */
+
+    String operator+(const std::string& aString, const String& cfString)
+    {
+        String newString = aString + cfString.data();
+
+        return newString;
+    }
+
+    String operator+(const String& string1, const String& string2)
+    {
+        return String(string1.data() + string2.data());
+    }
 
     template <typename T>
         requires std::is_arithmetic_v<T>

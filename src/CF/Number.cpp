@@ -117,7 +117,7 @@ namespace CF
     }
 
 // MARK: - Constructors -
-    Number::Number(void) noexcept
+    Number::Number() noexcept
     {
         int zero = 0;
 
@@ -323,11 +323,10 @@ namespace CF
     Number Number::operator=(const T value) noexcept
     {
         static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digits!");
-        assert(_cfObject != nullptr);
         CFNumberType numType = ConvertToCFNumberType<T>();
         CFAllocatorRef allocator = this->GetCFAlloc();
-        CFRelease(_cfObject);
-        _cfObject = CFNumberCreate(allocator, numType, &value);
+        Type::operator=(CFNumberCreate(allocator, numType, &value));
+
         return *this;
     }
 

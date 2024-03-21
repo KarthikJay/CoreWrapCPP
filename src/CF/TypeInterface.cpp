@@ -29,13 +29,15 @@ namespace CF
         return CFEqual(lhs._cfObject, rhs._cfObject);
     }
 
-    void Type::operator=(const Type& copyType) noexcept
+    void Type::operator=(const CFTypeRef copyType) noexcept
     {
         assert(_cfObject != nullptr);
-        assert(this->GetTypeID() == copyType.GetTypeID());
+        assert(copyType != nullptr);
+        assert(this->GetTypeID() == CFGetTypeID(copyType));
         CFRelease(_cfObject);
-        _cfObject = copyType._cfObject;
+        _cfObject = copyType;
         CFRetain(_cfObject);
+
         return;
     }
 }

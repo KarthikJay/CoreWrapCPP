@@ -22,7 +22,7 @@ include(CMakePrintHelpers)
 # Global Project Definition
 project(
 	CoreWrap++
-	VERSION 0.0.4
+	VERSION 0.0.5
 	DESCRIPTION "C++ wrappers for Apple's Objective-C Core* Libraries"
 	HOMEPAGE_URL "https://github.com/KarthikJay/CoreWrapCPP"
 	LANGUAGES C CXX)
@@ -103,10 +103,12 @@ target_sources(CoreWrap++
 # Set compile options
 target_compile_options(CoreWrap++
 						PRIVATE
-							"-Wall" "-Wextra" "-Wpedantic" "-fno-rtti" "-Wextra-semi" "-Wunused"
-							"-Warray-bounds-pointer-arithmetic" "-Wconversion" "-fconstant-cfstrings")
+							"-Wall" "-Wextra" "-Wmost" "-Wpedantic" "-fno-rtti" "-Wextra-semi" "-Wunused"
+							"-Warray-bounds-pointer-arithmetic" "-Wconversion" "-Wundef" "-Wreorder"
+							"-fconstant-cfstrings")
+# "-fcolor-diagnostics"
 if(${CMAKE_BUILD_TYPE} MATCHES "Deb")
-	target_compile_options(CoreWrap++ PRIVATE "")
+	target_compile_options(CoreWrap++ PRIVATE "--debug=full")
 elseif(${CMAKE_BUILD_TYPE} MATCHES "Rel")
 	target_compile_options(CoreWrap++ PRIVATE "-Werror")
 endif()

@@ -3,6 +3,7 @@ build/
 
 # Log files
 *.log
+*.ansi
 
 # Config files
 compile_commands.json

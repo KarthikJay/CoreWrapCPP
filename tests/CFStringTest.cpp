@@ -51,6 +51,15 @@ BOOST_AUTO_TEST_SUITE(string_relational_operators)
     }
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_AUTO_TEST_SUITE(string_array_operators)
+    BOOST_AUTO_TEST_CASE(char_index_accessor)
+    {
+        CF::String test("abcde");
+        BOOST_CHECK_EQUAL(test[0], 'a');
+        BOOST_CHECK_EQUAL(test[4], 'e');
+    }
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE(string_accessors)
     BOOST_AUTO_TEST_CASE(cstring_data)
     {
@@ -58,6 +67,12 @@ BOOST_AUTO_TEST_SUITE(string_accessors)
         BOOST_CHECK_EQUAL(test.data(), "Hello World!");
         BOOST_CHECK_EQUAL("Hello World!", test.data());
         BOOST_CHECK_NE(test.data(), "hello world!");
+    }
+    BOOST_AUTO_TEST_CASE(char_accessor)
+    {
+        CF::String test("ABCDE");
+        BOOST_CHECK_EQUAL(test.at(1), 'B');
+        BOOST_CHECK_THROW(test.at(5), std::out_of_range);
     }
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -68,5 +83,21 @@ BOOST_AUTO_TEST_SUITE(string_appends)
         test = test + (uint8_t) 5;
         BOOST_CHECK_EQUAL(test, "Number 5");
         BOOST_CHECK_EQUAL("Number 5", test);
+    }
+    BOOST_AUTO_TEST_CASE(cstring_append)
+    {
+        CF::String test1("Hello");
+        CF::String test2("Bar");
+        test1 = test1 + " World!";
+        BOOST_CHECK_EQUAL(test1, "Hello World!");
+        test2 = "Foo" + test2;
+        BOOST_CHECK_EQUAL("FooBar", test2);
+    }
+    BOOST_AUTO_TEST_CASE(cfstring_append)
+    {
+        CF::String lhs("This is a");
+        CF::String rhs(" complete sentence.");
+        CF::String test = lhs + rhs;
+        BOOST_CHECK_EQUAL("This is a complete sentence.", test);
     }
 BOOST_AUTO_TEST_SUITE_END()

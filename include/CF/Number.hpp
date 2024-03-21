@@ -7,12 +7,11 @@
 
 namespace CF
 {
-    // TODO: Look into a possible way to mark ctor/comparison as constexpr.
     class CWPP_API Number : public CF::Type
     {
         public:
             // Constructors
-            Number(void) noexcept;
+            Number() noexcept;
             template<typename T>
                 requires std::is_arithmetic_v<T>
             Number(const T value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
@@ -75,10 +74,10 @@ namespace CF
 
             // Logical Boolean unary operator
             explicit operator bool() const noexcept;
-            explicit operator const CFNumberRef(void) const noexcept { return static_cast<CFNumberRef>(_cfObject); }
+            explicit operator const CFNumberRef() const noexcept { return static_cast<CFNumberRef>(_cfObject); }
 
         protected:
-            CFTypeID GetTypeID(void) const override { return CFNumberGetTypeID(); }
+            CFTypeID GetTypeID() const override { return CFNumberGetTypeID(); }
         private:
     };
 }

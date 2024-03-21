@@ -157,13 +157,18 @@ BOOST_AUTO_TEST_SUITE(number_arithmetic_operators)
     BOOST_AUTO_TEST_CASE(u8_addition)
     {
         uint8_t temp = 10;
-        CF::Number num(static_cast<uint8_t>(5));
-        CF::Number test1(temp + num);
-        CF::Number test2(num + temp);
-        uint8_t test3 = num + static_cast<uint8_t>(25);
+        CF::Number num1(static_cast<uint8_t>(5));
+        CF::Number num2(static_cast<uint8_t>(250));
+        CF::Number num3 = num1 + num2;
+        CF::Number test1(temp + num1);
+        CF::Number test2(num1 + temp);
+        uint8_t test3 = num1 + static_cast<uint8_t>(25);
         BOOST_CHECK_EQUAL(test1, 15);
         BOOST_CHECK_EQUAL(test1, test2);
         BOOST_CHECK_EQUAL(test3, 30);
+        BOOST_CHECK_EQUAL(num3, (uint8_t)255);
+        num3 = num3 + 1;
+        BOOST_CHECK_EQUAL(num3, (uint8_t)256);
     }
     BOOST_AUTO_TEST_CASE(u8_with_float_addition)
     {
@@ -172,17 +177,9 @@ BOOST_AUTO_TEST_SUITE(number_arithmetic_operators)
         CF::Number test1(temp1+temp2);
         BOOST_CHECK_CLOSE((float)test1, 15.26768, 0.0001);
     }
-    BOOST_AUTO_TEST_CASE(cfnumber_u8_addition)
+    BOOST_AUTO_TEST_CASE(u8_multiplication)
     {
-        CF::Number lhs(static_cast<uint8_t>(100));
-        CF::Number rhs(static_cast<uint8_t>(56));
-        lhs = lhs + rhs;
-        BOOST_CHECK_EQUAL(lhs, 156);
-        CF::Number rhs2(static_cast<uint8_t>(100));
-        lhs = lhs + rhs2;
-        BOOST_CHECK_EQUAL(lhs, 256);
-        lhs = lhs + rhs2;
-        BOOST_CHECK_EQUAL(lhs, 356);
+
     }
     BOOST_AUTO_TEST_CASE(u8_division)
     {
