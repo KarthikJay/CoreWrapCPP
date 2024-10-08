@@ -1,5 +1,6 @@
 #include "CF/String.hpp"
 
+#include <string_view>
 #include <cstring>
 #include <stdexcept>
 #include <format>
@@ -7,10 +8,10 @@
 
 namespace CF
 {
-// MARK: - Internal Helper Defines
+// MARK: - Internal Helper Defines -
 
 // MARK: - Internal Helper Functions -
-const std::string_view GetEncodingName(CFStringEncoding encoding)
+static constexpr std::string_view GetEncodingName(CFStringEncoding encoding)
 {
     const char* name = nullptr;
     
@@ -65,16 +66,15 @@ const std::string_view GetEncodingName(CFStringEncoding encoding)
     }
 */
 
-    String::String(const std::string& cString, CFAllocatorRef alloc, CFStringEncoding encoding) noexcept
-    {
-        _cfObject = CFStringCreateWithCString(alloc, cString.data(), encoding);
-        _encoding = encoding;
-    }
+    String::String(const std::string& cString, CFAllocatorRef alloc, CFStringEncoding encoding) :
+        Type(CFStringCreateWithCString(alloc, cString.data(), encoding)),
+        _encoding(encoding)
+    {}
 
 // MARK: - Methods -
     std::strong_ordering operator<=>(const String& lhs, const String& rhs) noexcept
     {
-        CFComparisonResult result = CFStringCompare(static_cast<CFStringRef>(lhs._cfObject), static_cast<CFStringRef>(rhs._cfObject), String::kDefaultStringCompareOptions);
+        CFComparisonResult result = CFStringCompare(lhs, rhs, String::kDefaultStringCompareOptions);
 
         switch (result)
         {

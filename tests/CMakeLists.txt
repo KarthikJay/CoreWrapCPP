@@ -7,15 +7,16 @@
 cmake_minimum_required (VERSION 3.19)
 
 set(Boost_USE_STATIC_LIBS OFF)
+cmake_policy(SET CMP0167 NEW)
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 include_directories(${Boost_INCLUDE_DIRS} ${COREWRAP_INCLUDE_DIRECTORIES})
 
-# Global Project Targets
+# Test Properties
 set(CMAKE_CXX_STANDARD					20)
 set(CMAKE_CXX_EXTENSIONS				ON)
 set(CMAKE_CXX_STANDARD_REQUIRED			ON)
 set(CMAKE_CXX_VISIBILITY_PRESET			hidden)
-#set(LLVM_PROFILE_FILE					"ctest.profraw")
+enable_language(OBJCXX)
 link_libraries(${Boost_LIBRARIES} ${CORE_FOUNDATION_LIB} ${CMAKE_DL_LIBS} CoreWrap++)
 #add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
 add_compile_options(-fdebug-info-for-profiling)
@@ -74,51 +75,61 @@ if(NOT WIN32)
 	set(BoldWhite   "${Esc}[1;37m")
 endif()
 
+# Test Targets
 add_executable(cfbool-tests)
-list(APPEND TEST_TARGETS cfbool-tests)
 target_sources(cfbool-tests
 				PRIVATE
 					CFBooleanTest.cpp)
 ctest_boost_adapter(cfbool-tests)
-add_custom_command( TARGET cfbool-tests
-					POST_BUILD
-					COMMAND "LLVM_PROFILE_FILE=cfbool.profraw"
-							$<TARGET_FILE:cfbool-tests>
-							|| (exit 0) # This is needed in case tests fail, so underlying make system doesn't exit.
-					WORKING_DIRECTORY ${PARENT_BUILD_DIR}
-					MAIN_DEPENDENCY	cfbool-tests
-					COMMENT	"${Cyan}Generating coverage data for CF::Boolean...${ColourReset}")
 
 add_executable(cfnumber-tests)
-list(APPEND TEST_TARGETS cfnumber-tests)
 target_sources(cfnumber-tests
 				PRIVATE
 					CFNumberTest.cpp)
 ctest_boost_adapter(cfnumber-tests)
-add_custom_command( TARGET cfnumber-tests
-					POST_BUILD
-					COMMAND "LLVM_PROFILE_FILE=cfnumber.profraw"
-							$<TARGET_FILE:cfnumber-tests>
-							|| (exit 0) # This is needed in case tests fail, so underlying make system doesn't exit.
-					WORKING_DIRECTORY ${PARENT_BUILD_DIR}
-					MAIN_DEPENDENCY	cfnumber-tests
-					COMMENT	"${Cyan}Generating coverage data for CF::Number...${ColourReset}")
 
 add_executable(cfstring-tests)
-list(APPEND TEST_TARGETS cfstring-tests)
 target_sources(cfstring-tests
 				PRIVATE
 					CFStringTest.cpp)
 ctest_boost_adapter(cfstring-tests)
-add_custom_command( TARGET cfstring-tests
-					POST_BUILD
-					COMMAND "LLVM_PROFILE_FILE=cfstring.profraw"
-							$<TARGET_FILE:cfstring-tests>
-							|| (exit 0) # This is needed in case tests fail, so underlying make system doesn't exit.
-					WORKING_DIRECTORY ${PARENT_BUILD_DIR}
-					MAIN_DEPENDENCY	cfstring-tests
-					COMMENT	"${Cyan}Generating coverage data for CF::String...${ColourReset}")
 
+get_directory_property(TEST_TARGETS DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} BUILDSYSTEM_TARGETS)
+set(PROFILE_RAW_TARGETS ${TEST_TARGETS})
+list(TRANSFORM PROFILE_RAW_TARGETS APPEND ".profraw")
+
+# Commands to generate raw profiling data from each test executables
+foreach(TEST ${TEST_TARGETS})
+	add_custom_command(	OUTPUT ${TEST}.profraw
+						COMMAND "LLVM_PROFILE_FILE=$<TARGET_FILE_BASE_NAME:${TEST}>.profraw"
+								$<TARGET_FILE:${TEST}>
+								|| (exit 0) # This is needed in case tests fail, so underlying make system doesn't exit.
+						WORKING_DIRECTORY ${PARENT_BUILD_DIR}
+						COMMENT "${BoldCyan}Generating coverage data for ${TEST}...${ColourReset}"
+						DEPENDS ${TEST}
+						VERBATIM)
+	string(APPEND RAW_PROFILES "${TEST}.profraw ")
+endforeach()
+
+# Target to generate raw profiling data
+add_custom_target(	generate-cf-profraw
+					DEPENDS ${PROFILE_RAW_TARGETS})
+
+# Target to generate sparse profile data of all tests
+add_custom_target(	generate-cf-profdata
+					ALL
+					COMMAND bash -c "xcrun llvm-profdata merge --sparse ${RAW_PROFILES}-o CF.profdata"
+					WORKING_DIRECTORY ${PARENT_BUILD_DIR}
+					COMMENT "${BoldCyan}Collating raw profiling data...${ColourReset}"
+					DEPENDS generate-cf-profraw
+					VERBATIM)
+
+# Target to generate coverage report
+#add_custom_command(	OUTPUT CFCoverage.html)
+#add_custom_target(	generate-cf-coverage-report)
+
+
+# TODO: Custom Profiler (Requires only pure ANSI C functions)
 #[[
 set_source_files_properties(CFBooleanTest.cpp PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -finstrument-functions -fpic")
 add_library(CustomProfiler)

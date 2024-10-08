@@ -12,14 +12,14 @@ include(CMakePrintHelpers)
 # Compile commands:
 # 1. rm -rf build/ && cmake -B build/ -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Debug
 # 2. VERBOSE=1 cmake --build ./build --config Debug &| tee compile.log
-# 3. pushd ./build/tests/ && LLVM_PROFILE_FILE="cfbool.profraw" ./cfbool-tests && popd
-# 4. pushd ./build/tests/ && xcrun llvm-profdata merge -sparse ./cfbool.profraw -o cfbool.profdata && xcrun llvm-cov show --Xdemangler=(xcrun --find llvm-cxxfilt) --Xdemangler="-n"./cfbool-tests -instr-profile=./cfbool.profdata && xcrun llvm-cov report -show-instantiation-summary=1 ./cfbool-tests -instr-profile=./cfbool.profdata && popd
+# 3. pushd ./build/ && LLVM_PROFILE_FILE="cfbool.profraw" ./cfbool-tests && popd
+# 4. pushd ./build/ && xcrun llvm-profdata merge --sparse ./cfnumber-tests.profraw -o cfnumber-tests.profdata && xcrun llvm-cov show --Xdemangler=(xcrun --find llvm-cxxfilt) --Xdemangler="-n" ./cfnumber-tests -instr-profile=./cfnumber-tests.profdata libCoreWrap++.a && xcrun llvm-cov report -show-instantiation-summary=1 ./tests/cfnumber-tests -instr-profile=./cfnumber-tests.profdata && popd
 # 5. if you want to pass -show-functions=1 you also need to pass the source file location at the end of the command.
 
 # Test command:
 # 1. ctest --test-dir ./build/tests/
 
-# Global Project Definition
+# Project Definition
 project(
 	CoreWrap++
 	VERSION 0.0.5
@@ -33,7 +33,7 @@ option(BUILD_TESTS			"Build tests."				OFF)
 option(BUILD_EXAMPLES		"Build examples."			OFF)
 option(BUILD_INTERNAL_SDK	"Use internal Apple SDK's"  ON )
 
-# Global Project Properties
+# Project Properties
 set(CMAKE_CXX_STANDARD					20)
 set(CMAKE_CXX_EXTENSIONS				OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED			ON)
@@ -94,11 +94,13 @@ target_sources(CoreWrap++
 					include/CF/Boolean.hpp
 					include/CF/Number.hpp
 					include/CF/String.hpp
+					include/CF/Dictionary.hpp
 				PRIVATE
 					src/CF/TypeInterface.cpp
 					src/CF/Boolean.cpp
 					src/CF/Number.cpp
-					src/CF/String.cpp)
+					src/CF/String.cpp
+					src/CF/Dictionary.cpp)
 
 # Set compile options
 target_compile_options(CoreWrap++

@@ -2,6 +2,23 @@
 
 namespace CF
 {
+// MARK: - Constructors -
+    Type::Type(const CFTypeRef& object)
+    {
+        if (object == nullptr)
+            throw std::bad_alloc();
+
+        _cfObject = object;
+        if (CFGetRetainCount(object) < 1)
+            CFRetain(_cfObject);
+    }
+
+    Type::Type(const Type& object) :
+        Type(object._cfObject)
+    {
+        CFRetain(_cfObject);
+    }
+
     // TODO: This should probably throw if CF returns a failure to get the string...
     std::ostream &operator<<(std::ostream &os, const Type &obj) noexcept
     {

@@ -107,7 +107,11 @@ BOOST_AUTO_TEST_SUITE(number_assignment_operators)
     {
         uint8_t val = 5;
         CF::Number test = val;
+        uint8_t test2 = 0;
+        test2 = test;
         BOOST_CHECK_EQUAL(test, val);
+        BOOST_CHECK_EQUAL(test2, 5);
+        BOOST_CHECK_EQUAL(test2, test);
     }
     BOOST_AUTO_TEST_CASE(float_max_assignment)
     {

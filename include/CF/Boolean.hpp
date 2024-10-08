@@ -4,7 +4,7 @@
 
 namespace CF
 {
-    class CWPP_API Boolean : public CF::Type
+    class CWPP_API Boolean : public Type
     {
         public:
             // Constructors
@@ -14,7 +14,6 @@ namespace CF
             explicit operator bool() const noexcept;
 
             Boolean &operator=(bool value) noexcept;
-            Boolean &operator=(Boolean value) noexcept;
             bool operator==(const Boolean& cfValue) const noexcept;
             friend bool operator==(const Boolean& cfValue, const bool value) noexcept;
             friend bool operator==(const bool value, const Boolean& cfValue) noexcept;

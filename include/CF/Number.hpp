@@ -7,14 +7,14 @@
 
 namespace CF
 {
-    class CWPP_API Number : public CF::Type
+    class CWPP_API Number : public Type
     {
         public:
             // Constructors
-            Number() noexcept;
+            Number();
             template<typename T>
                 requires std::is_arithmetic_v<T>
-            Number(const T value = 0, CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+            Number(const T value = 0, CFAllocatorRef allocator = kCFAllocatorDefault);
 
             // Methods
             CFNumberType GetNumberTypeID() const noexcept;
@@ -74,7 +74,7 @@ namespace CF
 
             // Logical Boolean unary operator
             explicit operator bool() const noexcept;
-            explicit operator const CFNumberRef() const noexcept { return static_cast<CFNumberRef>(_cfObject); }
+            operator const CFNumberRef() const noexcept { return static_cast<CFNumberRef>(_cfObject); }
 
         protected:
             CFTypeID GetTypeID() const override { return CFNumberGetTypeID(); }

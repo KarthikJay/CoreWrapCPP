@@ -17,11 +17,11 @@
 	#endif
 #endif
 
-// CWPP_API & CWPP_LOCAL definitions
-#ifndef BUILD_STATIC
-	#define CWPP_API CWPP_SHARED_EXPORT
+// CWPP_API definitions
+#ifdef BUILD_STATIC
+	#define CWPP_API CWPP_SHARED_LOCAL
 #else
-	#define CWPP_API
+	#define CWPP_API CWPP_SHARED_EXPORT
 #endif
 
 // \note Not needed with CMake setting visibility default to hidden

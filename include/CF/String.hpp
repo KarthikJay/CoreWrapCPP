@@ -1,16 +1,15 @@
 #pragma once
 
 #include "TypeInterface.hpp"
-#include <string_view>
 
 namespace CF
 {
-    class CWPP_API String : public CF::Type
+    class CWPP_API String : public Type
     {
         // TO-DO: Implement rule of 5
         public:
             // Constructors
-            String(const std::string& cString, CFAllocatorRef alloc = kCFAllocatorDefault, CFStringEncoding encoding = String::GetSystemEncoding()) noexcept;
+            String(const std::string& cString, CFAllocatorRef alloc = kCFAllocatorDefault, CFStringEncoding encoding = String::GetSystemEncoding());
 
             // Static Definitions
             static constexpr CFStringCompareFlags kDefaultStringCompareOptions = 0;
@@ -43,7 +42,7 @@ namespace CF
             std::string data() const;
             char at(const size_t idx) const;
 
-            explicit operator const CFStringRef() const noexcept { return static_cast<CFStringRef>(_cfObject); }
+            operator const CFStringRef() const noexcept { return static_cast<CFStringRef>(_cfObject); }
         protected:
             CFTypeID GetTypeID() const override { return CFStringGetTypeID(); }
         private:

@@ -10,6 +10,9 @@ namespace CF
     class CWPP_API Type
     {
         public:
+            // Destructor
+            virtual ~Type() noexcept { assert(_cfObject != nullptr); CFRelease(_cfObject); }
+
             // Methods
             int64_t GetRetainCount(void) const noexcept { return CFGetRetainCount(_cfObject); }
 
@@ -25,11 +28,9 @@ namespace CF
             // TODO: Implement rule of 5!
 
             // Constructors
-            Type() noexcept { _cfObject = nullptr; }
-            Type(const Type& object) noexcept { this->_cfObject = object._cfObject; CFRetain(_cfObject); }
-
-            // Destructor
-            virtual ~Type() noexcept { assert(_cfObject != nullptr); CFRelease(_cfObject); }
+            Type() noexcept : _cfObject(nullptr) {}
+            Type(const CFTypeRef& object);
+            Type(const Type& object);
 
             // Methods
             CFAllocatorRef GetCFAlloc(void) const noexcept { return CFGetAllocator(_cfObject); }

@@ -7,6 +7,8 @@
 
 namespace CF
 {
+// MARK: - Internal Helper Defines -
+    static const int zero = 0;
 // MARK: - Internal Helper Functions -
 
     /*
@@ -117,20 +119,15 @@ namespace CF
     }
 
 // MARK: - Constructors -
-    Number::Number() noexcept
-    {
-        int zero = 0;
-
-        _cfObject = CFNumberCreate(kCFAllocatorDefault, ConvertToCFNumberType<int>(), &zero);
-    }
+    Number::Number() : Type(CFNumberCreate(kCFAllocatorDefault, ConvertToCFNumberType<int>(), &zero))
+    {}
 
     template <typename T>
         requires std::is_arithmetic_v<T>
-    Number::Number(const T value, CFAllocatorRef allocator) noexcept
+    Number::Number(const T value, CFAllocatorRef allocator) :
+        Type(CFNumberCreate(allocator, ConvertToCFNumberType<T>(), &value))
     {
         static_assert(std::numeric_limits<T>::digits != 0, "Passed in value has no valid digits!");
-        CFNumberType numType = ConvertToCFNumberType<T>();
-        _cfObject = CFNumberCreate(allocator, numType, &value);
     }
 
 // MARK: - Methods -
@@ -146,7 +143,7 @@ namespace CF
     {
         CFComparisonResult result;
         CF::Number temp(value);
-        result = CFNumberCompare(static_cast<CFNumberRef>(num._cfObject), static_cast<CFNumberRef>(temp._cfObject), NULL);
+        result = CFNumberCompare(num, temp, NULL);
 
         switch (result)
         {
@@ -205,13 +202,6 @@ namespace CF
         return (value == num);
     }
 
-// Needed to get rid of false positive warnings
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wimplicit-int-conversion"
-#pragma clang diagnostic ignored "-Wsign-conversion"
-#pragma clang diagnostic ignored "-Wfloat-conversion"
-#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
     template<typename T>
         requires std::is_arithmetic_v<T>
     Number::operator T() const noexcept
@@ -222,7 +212,7 @@ namespace CF
         std::visit([&cfObject, &value](auto data)
                     {
                         CFNumberGetValue(cfObject, CFNumberGetType(cfObject), &data);
-                        value = data;
+                        value = static_cast<T>(data);
                     }, cppType);
 
         return value;
@@ -240,7 +230,6 @@ namespace CF
                         return isValid;
                     }, cppType);
     }
-#pragma clang diagnostic pop
 
     template<typename T>
         requires std::is_arithmetic_v<T>
@@ -332,14 +321,14 @@ namespace CF
 
 // MARK: - Template Function Insantiations -
 
-    template Number::Number(const uint8_t value = 0,    CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const int8_t value = 0,     CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const uint16_t value = 0,   CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const int16_t value = 0,    CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const uint32_t value = 0,   CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const int32_t value = 0,    CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const float value = 0,      CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
-    template Number::Number(const double value = 0,     CFAllocatorRef allocator = kCFAllocatorDefault) noexcept;
+    template Number::Number(const uint8_t value = 0,    CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const int8_t value = 0,     CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const uint16_t value = 0,   CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const int16_t value = 0,    CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const uint32_t value = 0,   CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const int32_t value = 0,    CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const float value = 0,      CFAllocatorRef allocator = kCFAllocatorDefault);
+    template Number::Number(const double value = 0,     CFAllocatorRef allocator = kCFAllocatorDefault);
 
     template bool operator==(const uint8_t value,   const Number num)   noexcept;
     template bool operator==(const int8_t value,    const Number num)   noexcept;

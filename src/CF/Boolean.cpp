@@ -26,16 +26,7 @@ namespace CF
 
     Boolean &Boolean::operator=(bool value) noexcept
     {
-        CFRelease(_cfObject);
-        _cfObject = static_cast<CFBooleanRef>(CFRetain(convertToCFBool(value)));
-        return *this;
-    }
-
-    Boolean &Boolean::operator=(CF::Boolean value) noexcept
-    {
-        CFRelease(_cfObject);
-        bool underlying_value = static_cast<bool>(value);
-        _cfObject = static_cast<CFBooleanRef>(CFRetain(convertToCFBool(underlying_value)));
+        Type::operator=(convertToCFBool(value));
 
         return *this;
     }
